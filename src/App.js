@@ -1,8 +1,15 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react'; 
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Login from './components/login.jsx';
 import Register from './components/Register.jsx';
+import Dashboard from './components/Dashboard.jsx';
+import CreateProduct from './components/CreateProduct.jsx'; // <-- IMPORTAR
+import RegisterCrop from './components/RegisterCrop.jsx'; // <-- IMPORTAR
+import Marketplace from './components/Marketplace.jsx'; 
+import { Navigate } from 'react-router-dom';
+import authService from './services/authService';
 import './App.css';
+
 
 const Home = () => (
   <main>
@@ -78,9 +85,15 @@ const Home = () => (
   </main>
 );
 
-const Dashboard = () => <h2>Este es tu Dashboard</h2>;
 
 function App() {
+  const [currentUser, setCurrentUser] = useState(authService.getCurrentUser());
+
+  const handleLogout = () => {
+    authService.logout();
+    setCurrentUser(null);
+    // No necesitas redirigir aquí, el router lo hará
+  };
   return (
     <Router>
       <header>
@@ -93,8 +106,19 @@ function App() {
 
             <div className="collapse navbar-collapse" id="navMenu">
               <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-                <li className="nav-item"><Link className="nav-link" to="/login">Login</Link></li>
-                <li className="nav-item"><Link className="nav-link" to="/register">Registro</Link></li>
+                {currentUser ? (
+                  // Si el usuario está logueado
+                  <>
+                    <li className="nav-item"><Link className="nav-link" to="/dashboard">Dashboard</Link></li>
+                    <li className="nav-item"><a className="nav-link" href="/login" onClick={handleLogout}>Logout</a></li>
+                  </>
+                ) : (
+                  // Si el usuario NO está logueado
+                  <>
+                    <li className="nav-item"><Link className="nav-link" to="/login">Login</Link></li>
+                    <li className="nav-item"><Link className="nav-link" to="/register">Registro</Link></li>
+                  </>
+                )}
               </ul>
             </div>
           </div>
@@ -106,7 +130,10 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route  path="/dashboard" element={currentUser ? <Dashboard /> : <Navigate to="/login" />} />
+          <Route   path="/create-product" element={currentUser ? <CreateProduct /> : <Navigate to="/login" />} />
+          <Route path="/register-crop"element={currentUser ? <RegisterCrop /> : <Navigate to="/login" />} />
+          <Route path="/marketplace" element={currentUser ? <Marketplace /> : <Navigate to="/login" />} />
         </Routes>
       </div>
 
