@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import dataService from '../services/dataService';
-import './Marketplace.css'; // Crearemos este archivo para los estilos
+import './Marketplace.css'; // estilos mínimos para el marketplace
 
 const Marketplace = () => {
   const [products, setProducts] = useState([]);
@@ -21,37 +21,41 @@ const Marketplace = () => {
     };
 
     fetchProducts();
-  }, []); // El array vacío asegura que esto se ejecute solo una vez, al montar el componente
+  }, []);
 
   if (loading) {
-    return <div className="loading-container">Cargando productos...</div>;
+    return <div className="container py-4">Cargando productos...</div>;
   }
 
   if (error) {
-    return <div className="error-container">{error}</div>;
+    return <div className="container py-4 text-danger">{error}</div>;
   }
 
   return (
-    <div className="marketplace-container">
-      <h1>Mercado de Productos</h1>
-      <p>Explora los productos frescos directamente de nuestros agricultores.</p>
-      
+    <div className="container py-4">
+      <h1 className="mb-2">Mercado de Productos</h1>
+      <p className="text-muted mb-4">Explora los productos frescos directamente de nuestros agricultores.</p>
+
       {products.length === 0 ? (
         <p>No hay productos disponibles en este momento.</p>
       ) : (
-        <div className="product-grid">
+        <div className="row g-4">
           {products.map((product) => (
-            <div key={product.productId} className="product-card">
-              <h3>{product.name}</h3>
-              <p className="product-description">{product.description}</p>
-              <div className="product-details">
-                <span><strong>Precio:</strong> ${product.pricePerUnit} / {product.unitOfMeasure}</span>
-                <span><strong>Stock:</strong> {product.availableStock} {product.unitOfMeasure}</span>
+            <div key={product.productId} className="col-md-4">
+              <div className="card h-100 shadow-sm">
+                <div className="card-body d-flex flex-column">
+                  <h5 className="card-title">{product.name}</h5>
+                  <p className="card-text text-muted small">{product.description}</p>
+                  <div className="mt-auto">
+                    <div className="d-flex justify-content-between mb-2 small text-muted">
+                      <div><strong>Precio:</strong> ${product.pricePerUnit} / {product.unitOfMeasure}</div>
+                      <div><strong>Stock:</strong> {product.availableStock} {product.unitOfMeasure}</div>
+                    </div>
+                    <div className="mb-2 small text-muted">Vendido por: {product.farmer.name} {product.farmer.lastname}</div>
+                    <button className="btn btn-primary w-100">Contactar al Vendedor</button>
+                  </div>
+                </div>
               </div>
-              <div className="product-farmer">
-                Vendido por: {product.farmer.name} {product.farmer.lastname}
-              </div>
-              <button className="btn-buy">Contactar al Vendedor</button>
             </div>
           ))}
         </div>

@@ -110,6 +110,26 @@ const Login = () => {
                   <button type="button" className="btn btn-outline-secondary w-100">Facebook</button>
                 </div>
 
+                <div className="text-center mb-2">
+                  <span className="small text-muted">O usa una cuenta de prueba</span>
+                </div>
+                <div className="d-flex gap-2 mb-3">
+                  <button type="button" className="btn btn-sm btn-success w-50" onClick={async () => {
+                    setLoading(true); setMessage('');
+                    try {
+                      const res = await authService.login('demo@agricultor.test','agro123');
+                      if (res.data && res.data.accessToken) { localStorage.setItem('token', res.data.accessToken); navigate('/dashboard'); window.location.reload(); }
+                    } catch (e) { setMessage('Demo login falló'); } finally { setLoading(false); }
+                  }}>Demo Agricultor</button>
+                  <button type="button" className="btn btn-sm btn-primary w-50" onClick={async () => {
+                    setLoading(true); setMessage('');
+                    try {
+                      const res = await authService.login('demo@comprador.test','compra123');
+                      if (res.data && res.data.accessToken) { localStorage.setItem('token', res.data.accessToken); navigate('/dashboard'); window.location.reload(); }
+                    } catch (e) { setMessage('Demo login falló'); } finally { setLoading(false); }
+                  }}>Demo Comprador</button>
+                </div>
+
                 {message && (
                   <div className="alert alert-danger mt-2" role="alert">{message}</div>
                 )}

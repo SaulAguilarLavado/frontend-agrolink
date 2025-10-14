@@ -47,47 +47,56 @@ const RegisterCrop = () => {
   };
 
   return (
-    <div className="form-container">
-      <h2>Registrar Nuevo Cultivo</h2>
-      <form onSubmit={handleRegisterCrop}>
-        {!successful ? (
-          <div>
-            <div className="form-group">
-              <label htmlFor="name">Nombre del Cultivo</label>
-              <input type="text" name="name" value={name} onChange={onChange} required />
-            </div>
-            <div className="form-group">
-              <label htmlFor="description">Descripción</label>
-              <textarea name="description" value={description} onChange={onChange}></textarea>
-            </div>
-            <div className="form-group">
-              <label htmlFor="plantingDate">Fecha de Siembra</label>
-              <input type="date" name="plantingDate" value={plantingDate} onChange={onChange} required />
-            </div>
-            <div className="form-group">
-              <label htmlFor="cultivatedArea">Área Cultivada (Hectáreas)</label>
-              <input type="number" step="0.1" name="cultivatedArea" value={cultivatedArea} onChange={onChange} required />
-            </div>
-            <div className="form-group">
-              <button className="btn btn-primary" disabled={loading}>
-                {loading ? 'Guardando...' : 'Registrar Cultivo'}
-              </button>
-            </div>
-          </div>
-        ) : (
-             <div>
-                <Link to="/dashboard" className="btn-secondary">Volver al Dashboard</Link>
-            </div>
-        )}
+    <div className="container py-4">
+      <div className="card shadow-sm">
+        <div className="card-body">
+          <h2 className="card-title mb-3">Registrar Nuevo Cultivo</h2>
 
-        {message && (
-          <div className="form-group">
-            <div className={successful ? 'alert alert-success' : 'alert alert-danger'} role="alert">
-              {message}
-            </div>
-          </div>
-        )}
-      </form>
+          <form onSubmit={handleRegisterCrop}>
+            {!successful ? (
+              <div className="row g-3">
+                <div className="col-md-6">
+                  <label htmlFor="name" className="form-label">Nombre del Cultivo</label>
+                  <input className="form-control" type="text" name="name" value={name} onChange={onChange} required />
+                </div>
+
+                <div className="col-md-6">
+                  <label htmlFor="plantingDate" className="form-label">Fecha de Siembra</label>
+                  <input className="form-control" type="date" name="plantingDate" value={plantingDate} onChange={onChange} required />
+                </div>
+
+                <div className="col-12">
+                  <label htmlFor="description" className="form-label">Descripción</label>
+                  <textarea className="form-control" rows={3} name="description" value={description} onChange={onChange}></textarea>
+                </div>
+
+                <div className="col-md-6">
+                  <label htmlFor="cultivatedArea" className="form-label">Área Cultivada (Hectáreas)</label>
+                  <input className="form-control" type="number" step="0.1" name="cultivatedArea" value={cultivatedArea} onChange={onChange} required />
+                </div>
+
+                <div className="col-12">
+                  <button className="btn btn-primary" disabled={loading}>
+                    {loading ? 'Guardando...' : 'Registrar Cultivo'}
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div>
+                <Link to="/dashboard" className="btn btn-outline-secondary">Volver al Dashboard</Link>
+              </div>
+            )}
+
+            {message && (
+              <div className="mt-3">
+                <div className={successful ? 'alert alert-success' : 'alert alert-danger'} role="alert">
+                  {message}
+                </div>
+              </div>
+            )}
+          </form>
+        </div>
+      </div>
     </div>
   );
 };
