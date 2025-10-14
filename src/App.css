@@ -36,3 +36,59 @@
     transform: rotate(360deg);
   }
 }
+
+/* Custom styles for auth pages */
+.login-card, .register-card {
+  width: 100%;
+  max-width: 920px;
+  border: none;
+}
+
+.card-left {
+  background: linear-gradient(135deg, #198754 0%, #0d6efd 100%);
+}
+
+.card-right {
+  background: linear-gradient(135deg, #0d6efd 0%, #198754 100%);
+}
+
+.btn-gradient {
+  background: linear-gradient(90deg, #0d6efd 0%, #198754 100%);
+  border: none;
+  color: #fff;
+}
+
+/* Make cards pop */
+.card {
+  overflow: hidden;
+}
+
+.login-card .card-left, .register-card .card-right {
+  min-height: 260px;
+}
+
+@media (max-width: 767px) {
+  .card-left, .card-right {
+    display: none !important;
+  }
+}
+
+.opacity-85 { opacity: .85 }
+
+/* Home / Hero styles */
+.hero {
+  background: linear-gradient(180deg, rgba(13,110,253,0.05), rgba(25,135,84,0.02));
+}
+
+.hero .display-5 { color: #0d3b8f; }
+.hero-illustration rect { fill: #eef6ff }
+
+.feature-card { border: none; transition: transform .18s ease, box-shadow .18s ease; }
+.feature-card:hover { transform: translateY(-6px); box-shadow: 0 12px 30px rgba(13,110,253,0.12); }
+.feature-icon { font-size: 36px; }
+
+.navbar-brand { color: #0d6efd; }
+.nav-link { color: #333; }
+
+/* Small tweaks for layout */
+main { min-height: calc(100vh - 140px); }

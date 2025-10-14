@@ -29,7 +29,7 @@ const Register = () => {
 
     try {
       const response = await authService.register(formData);
-      setMessage(response.data);
+      setMessage(response.data || 'Registro correcto');
       setSuccessful(true);
     } catch (error) {
       const resMessage =
@@ -44,60 +44,76 @@ const Register = () => {
   };
 
   return (
-    <div className="form-container">
-      <h2>Registro</h2>
-      <form onSubmit={handleRegister}>
-        {!successful && (
-          <div>
-            {/* ... aquí van todos los campos del formulario ... */}
-            {/* (Nombre, Apellido, Email, etc.) */}
-             <div className="form-group">
-              <label htmlFor="name">Nombre</label>
-              <input type="text" name="name" value={name} onChange={onChange} required />
-            </div>
-            <div className="form-group">
-              <label htmlFor="lastname">Apellido</label>
-              <input type="text" name="lastname" value={lastname} onChange={onChange} required />
-            </div>
-            <div className="form-group">
-              <label htmlFor="email">Correo Electrónico</label>
-              <input type="email" name="email" value={email} onChange={onChange} required />
-            </div>
-            <div className="form-group">
-              <label htmlFor="password">Contraseña</label>
-              <input type="password" name="password" value={password} onChange={onChange} required />
-            </div>
-            <div className="form-group">
-              <label htmlFor="address">Dirección</label>
-              <input type="text" name="address" value={address} onChange={onChange} />
-            </div>
-            <div className="form-group">
-              <label htmlFor="phone">Teléfono</label>
-              <input type="text" name="phone" value={phone} onChange={onChange} />
-            </div>
-            <div className="form-group">
-              <label htmlFor="userType">Tipo de Usuario</label>
-              <select name="userType" value={userType} onChange={onChange}>
-                <option value="agricultor">Agricultor</option>
-                <option value="comprador">Comprador</option>
-              </select>
-            </div>
-            <div className="form-group">
-              <button className="btn btn-primary" disabled={loading}>
-                {loading ? 'Cargando...' : 'Registrarse'}
-              </button>
-            </div>
-          </div>
-        )}
+    <div className="d-flex align-items-center justify-content-center min-vh-100 bg-light">
+      <div className="card shadow-sm rounded-4 register-card p-3" style={{maxWidth: '900px'}}>
+        <div className="row g-0">
+          <div className="col-md-6 p-4">
+            <h3 className="mb-3">Crea tu cuenta</h3>
+            <p className="small text-muted">Regístrate para comenzar a publicar y conectar.</p>
 
-        {message && (
-          <div className="form-group">
-            <div className={successful ? 'alert alert-success' : 'alert alert-danger'} role="alert">
-              {message}
+            <form onSubmit={handleRegister}>
+              <div className="row">
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">Nombre</label>
+                  <input className="form-control" type="text" name="name" value={name} onChange={onChange} required />
+                </div>
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">Apellido</label>
+                  <input className="form-control" type="text" name="lastname" value={lastname} onChange={onChange} required />
+                </div>
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">Correo Electrónico</label>
+                <input className="form-control" type="email" name="email" value={email} onChange={onChange} required />
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">Contraseña</label>
+                <input className="form-control" type="password" name="password" value={password} onChange={onChange} required />
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">Dirección</label>
+                <input className="form-control" type="text" name="address" value={address} onChange={onChange} />
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">Teléfono</label>
+                <input className="form-control" type="text" name="phone" value={phone} onChange={onChange} />
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">Tipo de Usuario</label>
+                <select className="form-select" name="userType" value={userType} onChange={onChange}>
+                  <option value="agricultor">Agricultor</option>
+                  <option value="comprador">Comprador</option>
+                </select>
+              </div>
+
+              <div className="d-grid">
+                <button className="btn btn-success btn-lg" disabled={loading}>
+                  {loading ? 'Cargando...' : 'Registrarse'}
+                </button>
+              </div>
+            </form>
+
+            {message && (
+              <div className={`alert mt-3 ${successful ? 'alert-success' : 'alert-danger'}`} role="alert">{message}</div>
+            )}
+          </div>
+
+          <div className="col-md-6 d-none d-md-flex align-items-center justify-content-center card-right p-4 rounded-end-4">
+            <div className="text-center text-white">
+              <h4>Únete a la comunidad</h4>
+              <p className="small opacity-85">Publica productos, contacta compradores y gestiona tu producción desde un solo lugar.</p>
+              <div className="mt-3">
+                <button className="btn btn-outline-light">Ver beneficios</button>
+              </div>
             </div>
           </div>
-        )}
-      </form>
+        </div>
+      </div>
     </div>
   );
 };
