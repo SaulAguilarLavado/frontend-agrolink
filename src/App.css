@@ -92,3 +92,12 @@
 
 /* Small tweaks for layout */
 main { min-height: calc(100vh - 140px); }
+
+/* Home interactive styles */
+.stats { display:flex; gap:1.25rem; margin-top: .5rem }
+.stat { text-align:center }
+.stat-value { font-size:1.35rem; font-weight:700 }
+
+.testimonial { background:#fff }
+.feature-card { transition: transform .15s ease, box-shadow .15s ease }
+.feature-card:hover { transform: translateY(-6px); box-shadow: 0 14px 40px rgba(13,110,253,0.08) }
