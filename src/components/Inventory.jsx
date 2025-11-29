@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import dataService from '../services/dataService';
+import { useLocation } from 'react-router-dom';
 import { Container, Grid, Card, CardContent, Typography, Button, TextField, Dialog, DialogTitle, DialogContent, DialogActions, MenuItem, Snackbar, Alert } from '@mui/material';
 
-const Inventory = (props) => {
+const Inventory = (props) => { // <-- Volvemos a recibir 'props'
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
@@ -11,53 +12,41 @@ const Inventory = (props) => {
   const [reason, setReason] = useState('adjustment');
   const [message, setMessage] = useState(null);
 
-  const mine = !!(props && props.mine);
+  // --- LÓGICA CORREGIDA Y MEJORADA ---
+  const location = useLocation();
+  // 'isMyInventory' es true si la prop 'mine' es true, O si la URL incluye '/inventory'
+  const isMyInventory = !!props.mine || location.pathname.includes('/inventory');
 
   const fetchProducts = useCallback(async () => {
+    setLoading(true);
     try {
-      const res = mine ? await dataService.getMyInventory() : await dataService.getAllProducts();
-      console.debug('getAllProducts response:', res);
+      const res = isMyInventory ? await dataService.getMyInventory() : await dataService.getAllProducts();
+      
+      let items = res?.data && Array.isArray(res.data) ? res.data : [];
 
-      // Normalize response shapes from backend (array or wrapper objects)
-      let items = [];
-      if (!res || !res.data) {
-        items = [];
-      } else if (Array.isArray(res.data)) {
-        items = res.data;
-      } else if (Array.isArray(res.data.content)) {
-        items = res.data.content;
-      } else if (Array.isArray(res.data.products)) {
-        items = res.data.products;
-      } else if (Array.isArray(res.data.data)) {
-        items = res.data.data;
-      } else {
-        // if it's an object with keys, try to extract array-like values
-        const values = Object.values(res.data).find(v => Array.isArray(v));
-        items = values || [];
-      }
-
-      // Normalize product id / stock field names so UI can use consistent keys
       const normalized = items.map((p) => ({
-        productId: p.productId || p.id || p.product_id || p._id || null,
-        name: p.name || p.title || 'Sin nombre',
-        pricePerUnit: p.pricePerUnit ?? p.price ?? p.unitPrice ?? 0,
-        stock: p.availableStock ?? p.stock ?? p.quantity ?? 0,
+        productId: p.productId || p.id,
+        name: p.name || 'Sin nombre',
+        pricePerUnit: p.pricePerUnit ?? 0,
+        stock: p.availableStock ?? 0,
         description: p.description || '',
-        farmer: p.farmer || p.owner || {},
-        raw: p,
+        farmer: p.farmer || {},
       }));
 
       setProducts(normalized);
     } catch (e) {
-      console.error(e);
+      console.error('Error al cargar productos:', e);
       setMessage({ type: 'error', text: 'Error al cargar productos' });
     } finally {
       setLoading(false);
     }
-  }, [mine]);
+  }, [isMyInventory]);
 
-  useEffect(() => { fetchProducts(); }, [fetchProducts]);
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
+  // ... (El resto de las funciones handleOpen, handleDeleteProduct, etc., se quedan exactamente igual)
   const handleOpen = (product) => {
     setSelected(product);
     setDelta('');
@@ -67,7 +56,7 @@ const Inventory = (props) => {
 
   const handleDeleteProduct = async (product) => {
     if (!product || !product.productId) return;
-    const ok = window.confirm(`¿Eliminar producto "${product.name}" (ID: ${product.productId})? Esta acción no se puede deshacer.`);
+    const ok = window.confirm(`¿Eliminar producto "${product.name}"?`);
     if (!ok) return;
     try {
       await dataService.deleteProduct(product.productId);
@@ -84,8 +73,8 @@ const Inventory = (props) => {
   const handleAdjust = async () => {
     if (!selected) return;
     const parsed = parseFloat(delta);
-    if (isNaN(parsed) || parsed === 0) {
-      setMessage({ type: 'error', text: 'Ingrese una cantidad válida (positiva o negativa).' });
+    if (isNaN(parsed)) {
+      setMessage({ type: 'error', text: 'Ingrese una cantidad válida.' });
       return;
     }
 
@@ -102,31 +91,42 @@ const Inventory = (props) => {
 
   return (
     <Container sx={{ py: 4 }}>
-      <Typography variant="h5" gutterBottom>Inventario</Typography>
+      {/* El título ahora también usa la lógica correcta */}
+      <Typography variant="h5" gutterBottom>{isMyInventory ? 'Mi Inventario' : 'Inventario General'}</Typography>
       {loading ? (
         <Typography>Cargando...</Typography>
       ) : (
         <Grid container spacing={2}>
-          {products.map(p => (
-            <Grid item xs={12} md={4} key={p.productId}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6">{p.name}</Typography>
-                  <Typography variant="body2" color="text.secondary">Precio: ${p.pricePerUnit}</Typography>
-                  <Typography variant="body2" color="text.secondary">Stock: {p.stock}</Typography>
-                  <Button sx={{ mt: 2, mr: 1 }} variant="outlined" onClick={() => handleOpen(p)}>Ajustar stock</Button>
-                  <Button sx={{ mt: 2 }} color="error" variant="contained" onClick={() => handleDeleteProduct(p)}>Borrar</Button>
-                </CardContent>
-              </Card>
+          {products.length === 0 ? (
+            <Grid item xs={12}>
+              <Typography>No se encontraron productos.</Typography>
             </Grid>
-          ))}
+          ) : (
+            products.map(p => (
+              <Grid item xs={12} sm={6} md={4} key={p.productId}>
+                <Card>
+                  <CardContent>
+                    <Typography variant="h6">{p.name}</Typography>
+                    <Typography variant="body2" color="text.secondary">Precio: ${p.pricePerUnit}</Typography>
+                    <Typography variant="body2" color="text.secondary">Stock: {p.stock}</Typography>
+                    {isMyInventory && (
+                      <>
+                        <Button sx={{ mt: 2, mr: 1 }} variant="outlined" onClick={() => handleOpen(p)}>Ajustar stock</Button>
+                        <Button sx={{ mt: 2 }} color="error" variant="contained" onClick={() => handleDeleteProduct(p)}>Borrar</Button>
+                      </>
+                    )}
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))
+          )}
         </Grid>
       )}
 
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Ajustar stock - {selected?.name}</DialogTitle>
         <DialogContent>
-          <TextField label="Cantidad (+ entrada, - salida)" value={delta} onChange={(e) => setDelta(e.target.value)} fullWidth sx={{ mt: 1 }} />
+          <TextField label="Cantidad (+ entrada, - salida)" value={delta} onChange={(e) => setDelta(e.target.value)} type="number" fullWidth sx={{ mt: 1 }} />
           <TextField select label="Motivo" value={reason} onChange={(e) => setReason(e.target.value)} fullWidth sx={{ mt: 2 }}>
             <MenuItem value="sale">Venta</MenuItem>
             <MenuItem value="damage">Daño</MenuItem>

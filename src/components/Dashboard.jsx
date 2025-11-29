@@ -49,7 +49,7 @@ const Dashboard = () => {
               </Card>
             </Grid>
             <Grid item xs={12} md={6}>
-              <Inventory />
+              <Inventory mine={true}/>
             </Grid>
           </>
         )}
