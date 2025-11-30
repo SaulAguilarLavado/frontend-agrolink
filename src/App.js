@@ -183,9 +183,13 @@ function App() {
               {currentUser ? (
                 <>
                   <Button component={Link} to="/dashboard">Dashboard</Button>
-                  <Button component={Link} to="/inventory">Inventario</Button>
-                  <Button component={Link} to="/my-harvests">Mis Cosechas</Button>
-                  <Button component={Link} to="/my-crops">Mis Cultivos</Button>
+                  {currentUser.roles.includes('ROLE_AGRICULTOR') && (
+                    <>
+                      <Button component={Link} to="/inventory">Inventario</Button>
+                      <Button component={Link} to="/my-harvests">Mis Cosechas</Button>
+                      <Button component={Link} to="/my-crops">Mis Cultivos</Button>
+                    </>
+                  )}
                   <Button href="/login" onClick={handleLogout}>Logout</Button>
                 </>
               ) : (
