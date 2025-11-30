@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import dataService from '../services/dataService';
-import { Link } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { Container, Card, CardContent, Typography, Grid, TextField, MenuItem, InputAdornment, Button, Alert } from '@mui/material';
 
 const CreateProduct = () => {
+    const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -37,6 +39,8 @@ const CreateProduct = () => {
       await dataService.createProduct(productData);
       setMessage('¡Producto creado exitosamente!');
       setSuccessful(true);
+        // Redirect to inventory so user can see the created product
+        setTimeout(() => navigate('/inventory'), 800);
     } catch (error) {
       const resMessage =
         (error.response && error.response.data && error.response.data.message) ||
@@ -50,69 +54,57 @@ const CreateProduct = () => {
   };
 
   return (
-    <div className="container py-4">
-      <div className="card shadow-sm">
-        <div className="card-body">
-          <h2 className="card-title mb-3">Crear Nuevo Producto</h2>
+    <Container sx={{ py: 4 }}>
+      <Card>
+        <CardContent>
+          <Typography variant="h5" gutterBottom>Crear Nuevo Producto</Typography>
 
           <form onSubmit={handleCreateProduct}>
             {!successful ? (
-              <div className="row g-3">
-                <div className="col-12">
-                  <label htmlFor="name" className="form-label">Nombre del Producto</label>
-                  <input className="form-control" type="text" name="name" value={name} onChange={onChange} required />
-                </div>
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <TextField label="Nombre del Producto" name="name" value={name} onChange={onChange} required fullWidth />
+                </Grid>
 
-                <div className="col-12">
-                  <label htmlFor="description" className="form-label">Descripción</label>
-                  <textarea className="form-control" rows={4} name="description" value={description} onChange={onChange}></textarea>
-                </div>
+                <Grid item xs={12}>
+                  <TextField label="Descripción" name="description" value={description} onChange={onChange} multiline rows={4} fullWidth />
+                </Grid>
 
-                <div className="col-md-6">
-                  <label htmlFor="pricePerUnit" className="form-label">Precio por Unidad</label>
-                  <div className="input-group">
-                    <span className="input-group-text">$</span>
-                    <input className="form-control" type="number" step="0.01" name="pricePerUnit" value={pricePerUnit} onChange={onChange} required />
-                  </div>
-                </div>
+                <Grid item xs={12} md={6}>
+                  <TextField label="Precio por Unidad" name="pricePerUnit" type="number" step="0.01" value={pricePerUnit} onChange={onChange} required fullWidth InputProps={{ startAdornment: <InputAdornment position="start">$</InputAdornment> }} />
+                </Grid>
 
-                <div className="col-md-6">
-                  <label htmlFor="unitOfMeasure" className="form-label">Unidad de Medida</label>
-                  <select className="form-select" name="unitOfMeasure" value={unitOfMeasure} onChange={onChange} required>
-                    <option value="kg">kg</option>
-                    <option value="lb">lb</option>
-                    <option value="unidad">unidad</option>
-                  </select>
-                </div>
+                <Grid item xs={12} md={6}>
+                  <TextField select label="Unidad de Medida" name="unitOfMeasure" value={unitOfMeasure} onChange={onChange} fullWidth>
+                    <MenuItem value="kg">kg</MenuItem>
+                    <MenuItem value="lb">lb</MenuItem>
+                    <MenuItem value="unidad">unidad</MenuItem>
+                  </TextField>
+                </Grid>
 
-                <div className="col-md-6">
-                  <label htmlFor="availableStock" className="form-label">Stock Disponible</label>
-                  <input className="form-control" type="number" step="0.1" name="availableStock" value={availableStock} onChange={onChange} required />
-                </div>
+                <Grid item xs={12} md={6}>
+                  <TextField label="Stock Disponible" name="availableStock" type="number" step="0.1" value={availableStock} onChange={onChange} required fullWidth />
+                </Grid>
 
-                <div className="col-12">
-                  <button className="btn btn-primary" disabled={loading}>
-                    {loading ? 'Guardando...' : 'Crear Producto'}
-                  </button>
-                </div>
-              </div>
+                <Grid item xs={12}>
+                  <Button type="submit" variant="contained" color="primary" disabled={loading}>{loading ? 'Guardando...' : 'Crear Producto'}</Button>
+                </Grid>
+              </Grid>
             ) : (
               <div>
-                <Link to="/dashboard" className="btn btn-outline-secondary">Volver al Dashboard</Link>
+                <Button component={RouterLink} to="/dashboard" variant="outlined">Volver al Dashboard</Button>
               </div>
             )}
 
             {message && (
-              <div className="mt-3">
-                <div className={successful ? 'alert alert-success' : 'alert alert-danger'} role="alert">
-                  {message}
-                </div>
+              <div style={{ marginTop: 16 }}>
+                <Alert severity={successful ? 'success' : 'error'}>{message}</Alert>
               </div>
             )}
           </form>
-        </div>
-      </div>
-    </div>
+        </CardContent>
+      </Card>
+    </Container>
   );
 };
 

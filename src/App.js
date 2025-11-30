@@ -6,9 +6,15 @@ import Dashboard from './components/Dashboard.jsx';
 import CreateProduct from './components/CreateProduct.jsx'; // <-- IMPORTAR
 import RegisterCrop from './components/RegisterCrop.jsx'; // <-- IMPORTAR
 import Marketplace from './components/Marketplace.jsx'; 
+import Inventory from './components/Inventory.jsx';
+import CropDetail from './components/CropDetail.jsx';
+import RegisterHarvest from './components/RegisterHarvest.jsx';
+import MyHarvests from './components/MyHarvests.jsx';
+import MyCrops from './components/MyCrops.jsx';
 import { Navigate } from 'react-router-dom';
 import authService from './services/authService';
 import './App.css';
+import { AppBar, Toolbar, Typography, Button, Container, Grid, Card, CardContent, TextField, Box } from '@mui/material';
 
 
 const Home = () => {
@@ -61,36 +67,34 @@ const Home = () => {
 
   return (
     <main>
-      <section className="hero py-5">
-        <div className="container">
-          <div className="row align-items-center">
-            <div className="col-md-6">
-              <h1 className="display-5 fw-bold">Bienvenido a AgroLink</h1>
-              <p className="lead text-muted">Conecta con agricultores y compradores, gestiona cultivos y encuentra los mejores productos locales.</p>
-              <div className="d-flex gap-2 mt-4">
-                <Link to="/register" className="btn btn-lg btn-primary">Comenzar</Link>
-                <Link to="/login" className="btn btn-lg btn-outline-secondary">Ingresar</Link>
-              </div>
+      <section>
+        <Container sx={{ py: 5 }}>
+          <Grid container alignItems="center">
+            <Grid item xs={12} md={6}>
+              <Typography variant="h3" component="h1" gutterBottom>Bienvenido a AgroLink</Typography>
+              <Typography variant="body1" color="text.secondary">Conecta con agricultores y compradores, gestiona cultivos y encuentra los mejores productos locales.</Typography>
+              <Box sx={{ display: 'flex', gap: 2, mt: 3 }}>
+                <Button component={Link} to="/register" variant="contained">Comenzar</Button>
+                <Button component={Link} to="/login" variant="outlined">Ingresar</Button>
+              </Box>
 
-              <div className="mt-4">
-                <div className="d-flex gap-3 stats">
-                  <div className="stat">
-                    <div className="stat-value">{stats.products}</div>
-                    <div className="stat-label text-muted small">Productos</div>
-                  </div>
-                  <div className="stat">
-                    <div className="stat-value">{stats.farmers}</div>
-                    <div className="stat-label text-muted small">Agricultores</div>
-                  </div>
-                  <div className="stat">
-                    <div className="stat-value">{stats.orders}</div>
-                    <div className="stat-label text-muted small">Pedidos</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-6 d-none d-md-block">
-              <div className="hero-illustration p-4">
+              <Box sx={{ mt: 4, display: 'flex', gap: 3 }}>
+                <Box>
+                  <Typography variant="h5">{stats.products}</Typography>
+                  <Typography variant="caption" color="text.secondary">Productos</Typography>
+                </Box>
+                <Box>
+                  <Typography variant="h5">{stats.farmers}</Typography>
+                  <Typography variant="caption" color="text.secondary">Agricultores</Typography>
+                </Box>
+                <Box>
+                  <Typography variant="h5">{stats.orders}</Typography>
+                  <Typography variant="caption" color="text.secondary">Pedidos</Typography>
+                </Box>
+              </Box>
+            </Grid>
+            <Grid item xs={12} md={6} sx={{ display: { xs: 'none', md: 'block' } }}>
+              <Box sx={{ p: 2 }}>
                 <svg width="100%" height="320" viewBox="0 0 600 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Agriculture illustration">
                   <rect width="100%" height="100%" rx="12" fill="#f8f9fa" />
                   <g transform="translate(40,40)" fill="#0d6efd">
@@ -98,59 +102,62 @@ const Home = () => {
                     <rect x="140" y="40" width="160" height="140" rx="12" opacity="0.06" />
                   </g>
                 </svg>
-              </div>
-            </div>
-          </div>
-        </div>
+              </Box>
+            </Grid>
+          </Grid>
+        </Container>
       </section>
 
-      <section className="features py-5 bg-white">
-        <div className="container">
-          <div className="row align-items-center mb-3">
-            <div className="col-md-8">
-              <h2 className="fw-bold">Lo que ofrecemos</h2>
-              <p className="text-muted">Herramientas pensadas para facilitar el comercio y la gestión agrícola.</p>
-            </div>
-            <div className="col-md-4 text-md-end mt-3 mt-md-0">
-              <input className="form-control" placeholder="Buscar funciones..." value={search} onChange={(e) => setSearch(e.target.value)} />
-            </div>
-          </div>
+      <section>
+        <Container sx={{ py: 5 }}>
+          <Grid container alignItems="center" spacing={3}>
+            <Grid item xs={12} md={8}>
+              <Typography variant="h4" gutterBottom>Lo que ofrecemos</Typography>
+              <Typography variant="body2" color="text.secondary">Herramientas pensadas para facilitar el comercio y la gestión agrícola.</Typography>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <TextField fullWidth placeholder="Buscar funciones..." value={search} onChange={(e) => setSearch(e.target.value)} />
+            </Grid>
 
-          <div className="row g-4">
             {filtered.map(f => (
-              <div key={f.id} className="col-md-4">
-                <div className="card h-100 shadow-sm feature-card">
-                  <div className="card-body text-center">
-                    <div className="feature-icon mb-3" style={{fontSize: '28px'}}>{f.icon}</div>
-                    <h5 className="card-title">{f.title}</h5>
-                    <p className="card-text text-muted">{f.text}</p>
-                  </div>
-                </div>
-              </div>
+              <Grid item xs={12} md={4} key={f.id}>
+                <Card>
+                  <CardContent sx={{ textAlign: 'center' }}>
+                    <Box sx={{ fontSize: 28, mb: 1 }}>{f.icon}</Box>
+                    <Typography variant="h6">{f.title}</Typography>
+                    <Typography variant="body2" color="text.secondary">{f.text}</Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
             ))}
-          </div>
 
-          <div className="row mt-5 align-items-center">
-            <div className="col-md-6">
-              <h4>Testimonios</h4>
-              <div className="testimonial card p-3 shadow-sm">
-                <p className="mb-1">"{testimonials[testimonialIndex].text}"</p>
-                <div className="small text-muted">— {testimonials[testimonialIndex].name}</div>
-              </div>
-            </div>
-            <div className="col-md-6">
-              <h4>Suscríbete a novedades</h4>
+            <Grid item xs={12} md={6}>
+              <Typography variant="h6">Testimonios</Typography>
+              <Card sx={{ p: 2 }}>
+                <CardContent>
+                  <Typography>"{testimonials[testimonialIndex].text}"</Typography>
+                  <Typography variant="caption" color="text.secondary">— {testimonials[testimonialIndex].name}</Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <Typography variant="h6">Suscríbete a novedades</Typography>
               {!subscribed ? (
-                <form onSubmit={(e) => { e.preventDefault(); setSubscribed(true); }} className="d-flex gap-2">
-                  <input type="email" className="form-control" required placeholder="tu@correo.com" />
-                  <button className="btn btn-primary">Suscribir</button>
-                </form>
+                <Box component="form" onSubmit={(e) => { e.preventDefault(); setSubscribed(true); }} sx={{ display: 'flex', gap: 2 }}>
+                  <TextField type="email" required placeholder="tu@correo.com" fullWidth />
+                  <Button variant="contained">Suscribir</Button>
+                </Box>
               ) : (
-                <div className="alert alert-success">Gracias por suscribirte. Te avisaremos novedades.</div>
+                <Card>
+                  <CardContent>
+                    <Typography color="success.main">Gracias por suscribirte. Te avisaremos novedades.</Typography>
+                  </CardContent>
+                </Card>
               )}
-            </div>
-          </div>
-        </div>
+            </Grid>
+          </Grid>
+        </Container>
       </section>
     </main>
   );
@@ -167,34 +174,30 @@ function App() {
   };
   return (
     <Router>
-      <header>
-        <nav className="navbar navbar-expand-lg navbar-light bg-white border-bottom">
-          <div className="container">
-            <Link className="navbar-brand fw-bold" to={currentUser ? '/dashboard' : '/'}>AgroLink</Link>
-            <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
-              <span className="navbar-toggler-icon"></span>
-            </button>
+      <AppBar position="static" color="default" elevation={1}>
+        <Toolbar>
+          <Container sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Typography component={Link} to={currentUser ? '/dashboard' : '/'} variant="h6" sx={{ textDecoration: 'none', color: 'inherit' }}>AgroLink</Typography>
 
-            <div className="collapse navbar-collapse" id="navMenu">
-              <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-                {currentUser ? (
-                  // Si el usuario está logueado
-                  <>
-                    <li className="nav-item"><Link className="nav-link" to="/dashboard">Dashboard</Link></li>
-                    <li className="nav-item"><a className="nav-link" href="/login" onClick={handleLogout}>Logout</a></li>
-                  </>
-                ) : (
-                  // Si el usuario NO está logueado
-                  <>
-                    <li className="nav-item"><Link className="nav-link" to="/login">Login</Link></li>
-                    <li className="nav-item"><Link className="nav-link" to="/register">Registro</Link></li>
-                  </>
-                )}
-              </ul>
+            <div>
+              {currentUser ? (
+                <>
+                  <Button component={Link} to="/dashboard">Dashboard</Button>
+                  <Button component={Link} to="/inventory">Inventario</Button>
+                  <Button component={Link} to="/my-harvests">Mis Cosechas</Button>
+                  <Button component={Link} to="/my-crops">Mis Cultivos</Button>
+                  <Button href="/login" onClick={handleLogout}>Logout</Button>
+                </>
+              ) : (
+                <>
+                  <Button component={Link} to="/login">Login</Button>
+                  <Button component={Link} to="/register">Registro</Button>
+                </>
+              )}
             </div>
-          </div>
-        </nav>
-      </header>
+          </Container>
+        </Toolbar>
+      </AppBar>
 
       <div>
         <Routes>
@@ -205,12 +208,19 @@ function App() {
           <Route   path="/create-product" element={currentUser ? <CreateProduct /> : <Navigate to="/login" />} />
           <Route path="/register-crop"element={currentUser ? <RegisterCrop /> : <Navigate to="/login" />} />
           <Route path="/marketplace" element={currentUser ? <Marketplace /> : <Navigate to="/login" />} />
+          <Route path="/inventory" element={currentUser ? <Inventory /> : <Navigate to="/login" />} />
+          <Route path="/cultivos/:id" element={currentUser ? <CropDetail /> : <Navigate to="/login" />} />
+          <Route path="/cultivos/:id/register-harvest" element={currentUser ? <RegisterHarvest /> : <Navigate to="/login" />} />
+          <Route path="/my-harvests" element={currentUser ? <MyHarvests /> : <Navigate to="/login" />} />
+          <Route path="/my-crops" element={currentUser ? <MyCrops /> : <Navigate to="/login" />} />
         </Routes>
       </div>
 
-      <footer className="py-4 bg-light mt-5">
-        <div className="container text-center small text-muted">© {new Date().getFullYear()} AgroLink — Conectando el campo</div>
-      </footer>
+      <Box component="footer" sx={{ py: 4, mt: 5, bgcolor: 'background.paper' }}>
+        <Container sx={{ textAlign: 'center' }}>
+          <Typography variant="body2" color="text.secondary">© {new Date().getFullYear()} AgroLink — Conectando el campo</Typography>
+        </Container>
+      </Box>
     </Router>
   );
 }

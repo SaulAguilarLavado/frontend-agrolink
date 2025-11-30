@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import authService from '../services/authService';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
+import { Container, Grid, Card, CardContent, Typography, TextField, Button, Checkbox, FormControlLabel, Stack, CircularProgress, Alert } from '@mui/material';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -35,114 +36,80 @@ const Login = () => {
   };
 
   return (
-    <div className="d-flex align-items-center justify-content-center min-vh-100 bg-light">
-      <div className="card shadow-lg rounded-4 login-card">
-        <div className="row g-0">
-          <div className="col-md-5 d-none d-md-block card-left p-4 rounded-start-4">
-            <div className="h-100 d-flex flex-column justify-content-center text-white">
-              <h3 className="mb-3">Bienvenido a Agrolink</h3>
-              <p className="small opacity-85">Conecta agricultores y compradores, gestiona cultivos y más.</p>
-              <div className="mt-4">
-                <button className="btn btn-outline-light btn-sm me-2">Saber más</button>
+    <Container maxWidth="md" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
+      <Card sx={{ width: '100%', boxShadow: 3 }}>
+        <CardContent>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={5} sx={{ display: { xs: 'none', md: 'flex' }, backgroundColor: 'primary.main', color: 'white', p: 3, borderRadius: 1, alignItems: 'center' }}>
+              <div>
+                <Typography variant="h5" gutterBottom>Bienvenido a Agrolink</Typography>
+                <Typography variant="body2" sx={{ opacity: 0.9 }}>Conecta agricultores y compradores, gestiona cultivos y más.</Typography>
+                <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
+                  <Button variant="outlined" color="inherit" size="small">Saber más</Button>
+                </Stack>
               </div>
-            </div>
-          </div>
-          <div className="col-md-7 p-4">
-            <div className="card-body">
-              <h4 className="card-title mb-3">Iniciar Sesión</h4>
-              <p className="text-muted small">Usa tu cuenta para acceder al panel</p>
+            </Grid>
+
+            <Grid item xs={12} md={7}>
+              <Typography variant="h5" gutterBottom>Iniciar Sesión</Typography>
+              <Typography variant="body2" color="text.secondary" gutterBottom>Usa tu cuenta para acceder al panel</Typography>
 
               <form onSubmit={handleLogin}>
-                <div className="mb-3">
-                  <label htmlFor="email" className="form-label">Correo Electrónico</label>
-                  <input
-                    id="email"
-                    type="email"
-                    className="form-control"
-                    name="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    placeholder="tucorreo@ejemplo.com"
-                  />
-                </div>
+                <Stack spacing={2}>
+                  <TextField id="email" label="Correo Electrónico" type="email" name="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="tucorreo@ejemplo.com" fullWidth />
 
-                <div className="mb-3">
-                  <label htmlFor="password" className="form-label">Contraseña</label>
-                  <div className="input-group">
-                    <input
-                      id="password"
-                      type={showPassword ? 'text' : 'password'}
-                      className="form-control"
-                      name="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                      placeholder="••••••••"
-                    />
-                    <button type="button" className="btn btn-outline-secondary" onClick={() => setShowPassword(!showPassword)} aria-label="Toggle password">
-                      {showPassword ? 'Ocultar' : 'Mostrar'}
-                    </button>
-                  </div>
-                </div>
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <TextField id="password" label="Contraseña" type={showPassword ? 'text' : 'password'} name="password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="••••••••" fullWidth />
+                    <Button variant="outlined" onClick={() => setShowPassword(!showPassword)} aria-label="Toggle password">{showPassword ? 'Ocultar' : 'Mostrar'}</Button>
+                  </Stack>
 
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                  <div className="form-check">
-                    <input className="form-check-input" type="checkbox" id="remember" />
-                    <label className="form-check-label small" htmlFor="remember">Recuérdame</label>
-                  </div>
-                  <Link to="/forgot-password" className="small">¿Olvidaste tu contraseña?</Link>
-                </div>
+                  <Stack direction="row" justifyContent="space-between" alignItems="center">
+                    <FormControlLabel control={<Checkbox />} label="Recuérdame" />
+                    <RouterLink to="/forgot-password" style={{ textDecoration: 'none' }}><Typography variant="body2">¿Olvidaste tu contraseña?</Typography></RouterLink>
+                  </Stack>
 
-                <div className="d-grid mb-3">
-                  <button className="btn btn-primary btn-lg btn-gradient" type="submit" disabled={loading}>
-                    {loading && <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>}
+                  <Button type="submit" variant="contained" color="primary" size="large" disabled={loading} startIcon={loading ? <CircularProgress size={18} /> : null}>
                     Entrar
-                  </button>
-                </div>
+                  </Button>
 
-                <div className="text-center mb-3">
-                  <span className="small text-muted">o ingresa con</span>
-                </div>
+                  <Typography variant="body2" textAlign="center">o ingresa con</Typography>
 
-                <div className="d-flex gap-2 mb-3">
-                  <button type="button" className="btn btn-outline-secondary w-100">Google</button>
-                  <button type="button" className="btn btn-outline-secondary w-100">Facebook</button>
-                </div>
+                  <Stack direction="row" spacing={1}>
+                    <Button variant="outlined" fullWidth>Google</Button>
+                    <Button variant="outlined" fullWidth>Facebook</Button>
+                  </Stack>
 
-                <div className="text-center mb-2">
-                  <span className="small text-muted">O usa una cuenta de prueba</span>
-                </div>
-                <div className="d-flex gap-2 mb-3">
-                  <button type="button" className="btn btn-sm btn-success w-50" onClick={async () => {
-                    setLoading(true); setMessage('');
-                    try {
-                      const res = await authService.login('demo@agricultor.test','agro123');
-                      if (res.data && res.data.accessToken) { localStorage.setItem('token', res.data.accessToken); navigate('/dashboard'); window.location.reload(); }
-                    } catch (e) { setMessage('Demo login falló'); } finally { setLoading(false); }
-                  }}>Demo Agricultor</button>
-                  <button type="button" className="btn btn-sm btn-primary w-50" onClick={async () => {
-                    setLoading(true); setMessage('');
-                    try {
-                      const res = await authService.login('demo@comprador.test','compra123');
-                      if (res.data && res.data.accessToken) { localStorage.setItem('token', res.data.accessToken); navigate('/dashboard'); window.location.reload(); }
-                    } catch (e) { setMessage('Demo login falló'); } finally { setLoading(false); }
-                  }}>Demo Comprador</button>
-                </div>
+                  <Typography variant="body2" textAlign="center">O usa una cuenta de prueba</Typography>
 
-                {message && (
-                  <div className="alert alert-danger mt-2" role="alert">{message}</div>
-                )}
+                  <Stack direction="row" spacing={1}>
+                    <Button variant="contained" color="success" fullWidth size="small" onClick={async () => {
+                      setLoading(true); setMessage('');
+                      try {
+                        const res = await authService.login('demo@agricultor.test','agro123');
+                        if (res.data && res.data.accessToken) { localStorage.setItem('token', res.data.accessToken); navigate('/dashboard'); window.location.reload(); }
+                      } catch (e) { setMessage('Demo login falló'); } finally { setLoading(false); }
+                    }}>Demo Agricultor</Button>
+                    <Button variant="contained" color="primary" fullWidth size="small" onClick={async () => {
+                      setLoading(true); setMessage('');
+                      try {
+                        const res = await authService.login('demo@comprador.test','compra123');
+                        if (res.data && res.data.accessToken) { localStorage.setItem('token', res.data.accessToken); navigate('/dashboard'); window.location.reload(); }
+                      } catch (e) { setMessage('Demo login falló'); } finally { setLoading(false); }
+                    }}>Demo Comprador</Button>
+                  </Stack>
 
-                <div className="text-center mt-3">
-                  <small>¿No tienes cuenta? <a href="/register">Regístrate</a></small>
-                </div>
+                  {message && (
+                    <Alert severity="error">{message}</Alert>
+                  )}
+
+                  <Typography variant="body2" textAlign="center">¿No tienes cuenta? <a href="/register">Regístrate</a></Typography>
+                </Stack>
               </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+            </Grid>
+          </Grid>
+        </CardContent>
+      </Card>
+    </Container>
   );
 };
 

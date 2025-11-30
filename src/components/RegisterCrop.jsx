@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import dataService from '../services/dataService';
-import { Link } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
+import { Container, Card, CardContent, Typography, Grid, TextField, Button, Alert } from '@mui/material';
 
 const RegisterCrop = () => {
   const [formData, setFormData] = useState({
@@ -47,57 +48,49 @@ const RegisterCrop = () => {
   };
 
   return (
-    <div className="container py-4">
-      <div className="card shadow-sm">
-        <div className="card-body">
-          <h2 className="card-title mb-3">Registrar Nuevo Cultivo</h2>
+    <Container sx={{ py: 4 }}>
+      <Card>
+        <CardContent>
+          <Typography variant="h5" gutterBottom>Registrar Nuevo Cultivo</Typography>
 
           <form onSubmit={handleRegisterCrop}>
             {!successful ? (
-              <div className="row g-3">
-                <div className="col-md-6">
-                  <label htmlFor="name" className="form-label">Nombre del Cultivo</label>
-                  <input className="form-control" type="text" name="name" value={name} onChange={onChange} required />
-                </div>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={6}>
+                  <TextField label="Nombre del Cultivo" name="name" value={name} onChange={onChange} required fullWidth />
+                </Grid>
 
-                <div className="col-md-6">
-                  <label htmlFor="plantingDate" className="form-label">Fecha de Siembra</label>
-                  <input className="form-control" type="date" name="plantingDate" value={plantingDate} onChange={onChange} required />
-                </div>
+                <Grid item xs={12} md={6}>
+                  <TextField label="Fecha de Siembra" name="plantingDate" type="date" value={plantingDate} onChange={onChange} InputLabelProps={{ shrink: true }} required fullWidth />
+                </Grid>
 
-                <div className="col-12">
-                  <label htmlFor="description" className="form-label">Descripción</label>
-                  <textarea className="form-control" rows={3} name="description" value={description} onChange={onChange}></textarea>
-                </div>
+                <Grid item xs={12}>
+                  <TextField label="Descripción" name="description" value={description} onChange={onChange} multiline rows={3} fullWidth />
+                </Grid>
 
-                <div className="col-md-6">
-                  <label htmlFor="cultivatedArea" className="form-label">Área Cultivada (Hectáreas)</label>
-                  <input className="form-control" type="number" step="0.1" name="cultivatedArea" value={cultivatedArea} onChange={onChange} required />
-                </div>
+                <Grid item xs={12} md={6}>
+                  <TextField label="Área Cultivada (Hectáreas)" name="cultivatedArea" type="number" step="0.1" value={cultivatedArea} onChange={onChange} required fullWidth />
+                </Grid>
 
-                <div className="col-12">
-                  <button className="btn btn-primary" disabled={loading}>
-                    {loading ? 'Guardando...' : 'Registrar Cultivo'}
-                  </button>
-                </div>
-              </div>
+                <Grid item xs={12}>
+                  <Button type="submit" variant="contained" disabled={loading} fullWidth>{loading ? 'Guardando...' : 'Registrar Cultivo'}</Button>
+                </Grid>
+              </Grid>
             ) : (
               <div>
-                <Link to="/dashboard" className="btn btn-outline-secondary">Volver al Dashboard</Link>
+                <Button component={RouterLink} to="/dashboard" variant="outlined">Volver al Dashboard</Button>
               </div>
             )}
 
             {message && (
-              <div className="mt-3">
-                <div className={successful ? 'alert alert-success' : 'alert alert-danger'} role="alert">
-                  {message}
-                </div>
+              <div style={{ marginTop: 16 }}>
+                <Alert severity={successful ? 'success' : 'error'}>{message}</Alert>
               </div>
             )}
           </form>
-        </div>
-      </div>
-    </div>
+        </CardContent>
+      </Card>
+    </Container>
   );
 };
 

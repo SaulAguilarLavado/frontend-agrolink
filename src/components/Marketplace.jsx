@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import dataService from '../services/dataService';
-import './Marketplace.css'; // estilos mínimos para el marketplace
+import { Container, Grid, Card, CardContent, Typography, Button, Stack } from '@mui/material';
 
 const Marketplace = () => {
   const [products, setProducts] = useState([]);
@@ -24,43 +24,43 @@ const Marketplace = () => {
   }, []);
 
   if (loading) {
-    return <div className="container py-4">Cargando productos...</div>;
+    return <Container sx={{ py: 4 }}>Cargando productos...</Container>;
   }
 
   if (error) {
-    return <div className="container py-4 text-danger">{error}</div>;
+    return <Container sx={{ py: 4 }}><Typography color="error">{error}</Typography></Container>;
   }
 
   return (
-    <div className="container py-4">
-      <h1 className="mb-2">Mercado de Productos</h1>
-      <p className="text-muted mb-4">Explora los productos frescos directamente de nuestros agricultores.</p>
+    <Container sx={{ py: 4 }}>
+      <Typography variant="h4" gutterBottom>Mercado de Productos</Typography>
+      <Typography variant="body2" color="text.secondary" gutterBottom>Explora los productos frescos directamente de nuestros agricultores.</Typography>
 
       {products.length === 0 ? (
-        <p>No hay productos disponibles en este momento.</p>
+        <Typography>No hay productos disponibles en este momento.</Typography>
       ) : (
-        <div className="row g-4">
+        <Grid container spacing={3}>
           {products.map((product) => (
-            <div key={product.productId} className="col-md-4">
-              <div className="card h-100 shadow-sm">
-                <div className="card-body d-flex flex-column">
-                  <h5 className="card-title">{product.name}</h5>
-                  <p className="card-text text-muted small">{product.description}</p>
-                  <div className="mt-auto">
-                    <div className="d-flex justify-content-between mb-2 small text-muted">
+            <Grid item xs={12} md={4} key={product.productId}>
+              <Card sx={{ height: '100%' }}>
+                <CardContent sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                  <Typography variant="h6">{product.name}</Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ flexGrow: 1 }}>{product.description}</Typography>
+                  <div>
+                    <Stack direction="row" justifyContent="space-between" sx={{ my: 1 }}>
                       <div><strong>Precio:</strong> ${product.pricePerUnit} / {product.unitOfMeasure}</div>
                       <div><strong>Stock:</strong> {product.availableStock} {product.unitOfMeasure}</div>
-                    </div>
-                    <div className="mb-2 small text-muted">Vendido por: {product.farmer.name} {product.farmer.lastname}</div>
-                    <button className="btn btn-primary w-100">Contactar al Vendedor</button>
+                    </Stack>
+                    <Typography variant="caption" color="text.secondary">Vendido por: {product.farmer.name} {product.farmer.lastname}</Typography>
+                    <Button variant="contained" fullWidth sx={{ mt: 2 }}>Contactar al Vendedor</Button>
                   </div>
-                </div>
-              </div>
-            </div>
+                </CardContent>
+              </Card>
+            </Grid>
           ))}
-        </div>
+        </Grid>
       )}
-    </div>
+    </Container>
   );
 };
 

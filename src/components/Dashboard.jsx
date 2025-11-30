@@ -1,6 +1,8 @@
 import React from 'react';
 import authService from '../services/authService';
-import { Link } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
+import { Container, Grid, Card, CardContent, Typography, Button, Chip, Stack } from '@mui/material';
+import Inventory from './Inventory';
 
 const Dashboard = () => {
   const currentUser = authService.getCurrentUser();
@@ -17,53 +19,56 @@ const Dashboard = () => {
   const isComprador = currentUser.roles.includes('ROLE_COMPRADOR');
 
   return (
-    <div className="container py-4">
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h2 className="mb-0">Dashboard</h2>
-        <div className="text-end small text-muted">
-          Bienvenido, <strong>{(currentUser.name || currentUser.lastname) ? `${currentUser.name || ''} ${currentUser.lastname || ''}`.trim() : currentUser.email}</strong>
-        </div>
-      </div>
+    <Container sx={{ py: 4 }}>
+      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
+        <Typography variant="h4">Dashboard</Typography>
+        <Typography variant="body2" color="text.secondary">Bienvenido, <strong>{(currentUser.name || currentUser.lastname) ? `${currentUser.name || ''} ${currentUser.lastname || ''}`.trim() : currentUser.email}</strong></Typography>
+      </Stack>
 
-      <div className="mb-3">
-        <span className="badge bg-info me-2">Roles</span>
+      <Stack direction="row" spacing={1} sx={{ mb: 3 }} alignItems="center">
+        <Chip label="Roles" color="info" />
         {currentUser.roles.map((r) => {
           const label = r === 'ROLE_AGRICULTOR' ? 'Agricultor' : r === 'ROLE_COMPRADOR' ? 'Comprador' : r;
-          return <span key={r} className="badge bg-secondary me-1">{label}</span>;
+          return <Chip key={r} label={label} color="default" />;
         })}
-      </div>
+      </Stack>
 
-      <div className="row g-3">
+      <Grid container spacing={3}>
         {isAgricultor && (
-          <div className="col-md-6">
-            <div className="card shadow-sm h-100">
-              <div className="card-body">
-                <h5 className="card-title">Panel de Agricultor</h5>
-                <p className="text-muted">Aquí puedes gestionar tus productos y cultivos.</p>
-                <div className="d-flex gap-2 mt-3">
-                  <Link to="/create-product" className="btn btn-success">Crear Producto</Link>
-                  <Link to="/register-crop" className="btn btn-outline-primary">Registrar Cultivo</Link>
-                </div>
-              </div>
-            </div>
-          </div>
+          <>
+            <Grid item xs={12} md={6}>
+              <Card sx={{ height: '100%' }}>
+                <CardContent>
+                  <Typography variant="h6">Panel de Agricultor</Typography>
+                  <Typography variant="body2" color="text.secondary">Aquí puedes gestionar tus productos y cultivos.</Typography>
+                  <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
+                    <Button component={RouterLink} to="/create-product" variant="contained" color="success">Crear Producto</Button>
+                    <Button component={RouterLink} to="/register-crop" variant="outlined">Registrar Cultivo</Button>
+                  </Stack>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Inventory mine={true}/>
+            </Grid>
+          </>
         )}
 
         {isComprador && (
-          <div className="col-md-6">
-            <div className="card shadow-sm h-100">
-              <div className="card-body">
-                <h5 className="card-title">Panel de Comprador</h5>
-                <p className="text-muted">Aquí puedes buscar productos y realizar pedidos.</p>
-                <div className="mt-3">
-                  <Link to="/marketplace" className="btn btn-primary">Ver Productos en el Mercado</Link>
-                </div>
-              </div>
-            </div>
-          </div>
+          <Grid item xs={12} md={6}>
+            <Card sx={{ height: '100%' }}>
+              <CardContent>
+                <Typography variant="h6">Panel de Comprador</Typography>
+                <Typography variant="body2" color="text.secondary">Aquí puedes buscar productos y realizar pedidos.</Typography>
+                <Stack sx={{ mt: 2 }}>
+                  <Button component={RouterLink} to="/marketplace" variant="contained">Ver Productos en el Mercado</Button>
+                </Stack>
+              </CardContent>
+            </Card>
+          </Grid>
         )}
-      </div>
-    </div>
+      </Grid>
+    </Container>
   );
 };
 
