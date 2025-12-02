@@ -1,15 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Container, Typography, Card, CardContent, Grid, Alert, Table, TableHead, TableRow, TableCell, TableBody, Stack, LinearProgress, Box, Paper, Chip } from '@mui/material';
 import dataService from '../services/dataService';
 import AgricultureIcon from '@mui/icons-material/Agriculture';
 import PieChartIcon from '@mui/icons-material/PieChart';
-
-const COLORS = {
-  PENDIENTE: 'info.main',
-  ACTIVO: 'primary.main',
-  COSECHADO: 'success.main',
-  CANCELADO: 'error.main',
-};
 
 const ReportCrops = () => {
   const [data, setData] = useState(null);

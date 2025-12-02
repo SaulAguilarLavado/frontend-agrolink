@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import dataService from '../services/dataService';
-import { Container, Grid, Card, CardContent, Typography, Button, Stack, TextField, MenuItem, Box, Chip, CardActions, IconButton, Paper } from '@mui/material';
+import { Container, Grid, Card, CardContent, Typography, Button, Stack, TextField, MenuItem, Box, Chip, CardActions, Paper } from '@mui/material';
 import { useCart } from '../context/CartContext';
 import { toUserMessage } from '../utils/error';
 import ErrorBanner from './common/ErrorBanner';

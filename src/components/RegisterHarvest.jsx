@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import dataService from '../services/dataService';
-import { Container, Card, CardContent, Typography, TextField, Button, Grid, Snackbar, Alert, MenuItem, Box, Paper } from '@mui/material';
+import { Container, Typography, TextField, Button, Grid, Snackbar, Alert, MenuItem, Box, Paper } from '@mui/material';
 import AgricultureIcon from '@mui/icons-material/Agriculture';
 
 const RegisterHarvest = () => {

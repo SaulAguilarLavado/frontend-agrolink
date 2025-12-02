@@ -28,11 +28,11 @@ import ErrorBoundary from './components/common/ErrorBoundary.jsx';
 import authService from './services/authService';
 import dataService from './services/dataService';
 import { CartProvider, useCart } from './context/CartContext';
-import { NotificationsProvider, useNotifications } from './context/NotificationsContext';
+import { NotificationsProvider } from './context/NotificationsContext';
 
 // Componentes de Material UI e Iconos
-import { AppBar, Toolbar, Typography, Button, Container, Grid, Card, CardContent, TextField, Box, Stack, InputAdornment, Divider, IconButton, Badge } from '@mui/material';
-import { ShoppingBasket, Handshake, BarChart, LocalShipping, Chat, Search as SearchIcon, TrendingUp, PeopleAlt, ReceiptLong, Logout, Inventory2, ShoppingCart, Notifications as NotificationsIcon } from '@mui/icons-material';
+import { AppBar, Toolbar, Typography, Button, Container, Grid, Card, CardContent, Box, Stack, Divider, Badge, IconButton } from '@mui/material';
+import { TrendingUp, PeopleAlt, ReceiptLong, Logout, ShoppingCart, Notifications as NotificationsIcon } from '@mui/icons-material';
 
 import './App.css';
 

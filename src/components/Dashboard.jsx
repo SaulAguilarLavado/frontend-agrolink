@@ -1,8 +1,8 @@
 import React from 'react';
 import authService from '../services/authService';
 import { Link as RouterLink } from 'react-router-dom';
-import { Container, Grid, Card, CardContent, Typography, Button, Chip, Stack, Box, Divider, Paper, Avatar } from '@mui/material';
-import { Agriculture, AddCircleOutline, AddBox, Assessment, Storefront, Store, Inventory2, TrendingUp, ShoppingCart, LocalShipping, Grass, AttachMoney, BarChart, PieChart, ShowChart, ShoppingBag } from '@mui/icons-material';
+import { Container, Grid, Card, CardContent, Typography, Button, Chip, Stack, Box, Paper, Avatar } from '@mui/material';
+import { Agriculture, AddBox, Assessment, Store, Inventory2, TrendingUp, ShoppingCart, LocalShipping, Grass, AttachMoney, BarChart, PieChart, ShowChart, ShoppingBag } from '@mui/icons-material';
 import dataService from '../services/dataService';
 
 const Dashboard = () => {
@@ -11,13 +11,6 @@ const Dashboard = () => {
   // Roles calculados de forma segura (evita hooks condicionales)
   const isAgricultor = !!currentUser && currentUser.roles.includes('ROLE_AGRICULTOR');
   const isComprador = !!currentUser && currentUser.roles.includes('ROLE_COMPRADOR');
-
-  // Datos simulados de métricas (se podrían reemplazar por fetch real)
-  const metrics = [
-    { label: 'Productos', value: 124 },
-    { label: 'Cosechas', value: 32 },
-    { label: 'Ventas', value: 540 },
-  ];
 
   const [harvestCount, setHarvestCount] = React.useState(null);
   const [cropCount, setCropCount] = React.useState(null);
