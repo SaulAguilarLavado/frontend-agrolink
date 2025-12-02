@@ -4,7 +4,6 @@ import { useLocation } from 'react-router-dom';
 import { Container, Grid, Card, CardContent, Typography, Button, TextField, Dialog, DialogTitle, DialogContent, DialogActions, MenuItem, Snackbar, Alert, Box, Paper, Chip, Stack } from '@mui/material';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
-import StorefrontIcon from '@mui/icons-material/Storefront';
 
 const Inventory = (props) => { // <-- Volvemos a recibir 'props'
   const [products, setProducts] = useState([]);

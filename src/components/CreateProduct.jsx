@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import dataService from '../services/dataService';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { Container, Card, CardContent, Typography, Grid, TextField, MenuItem, InputAdornment, Button, Alert, Box, Paper, Chip, Stack } from '@mui/material';
+import { Container, Card, CardContent, Typography, Grid, TextField, MenuItem, InputAdornment, Button, Alert, Box, Paper } from '@mui/material';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 
 const CreateProduct = () => {
@@ -132,7 +132,7 @@ const CreateProduct = () => {
 
     try {
       // Crear el producto
-      const response = await dataService.createProduct(productData);
+      await dataService.createProduct(productData);
       
       setMessage('¡Producto creado exitosamente!');
       setSuccessful(true);

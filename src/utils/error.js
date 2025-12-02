@@ -7,7 +7,7 @@ export function extractErrorInfo(err) {
     const status = err?.response?.status ?? null;
     const data = err?.response?.data;
     const serverMessage = typeof data === 'string' ? data : (data?.message || data?.error || null);
-    const network = !!(err?.code === 'ECONNABORTED' || err?.message?.includes('Network Error') || !err?.response && err?.request);
+    const network = !!(err?.code === 'ECONNABORTED' || err?.message?.includes('Network Error') || (!err?.response && err?.request));
     return {
       type: 'axios',
       status,

@@ -39,10 +39,6 @@ export const NotificationsProvider = ({ children }) => {
     });
   };
 
-  const getFor = (email) => (store[email] || []).slice().sort((a, b) => b.createdAt - a.createdAt);
-
-  const getUnreadCount = (email) => (store[email] || []).filter(n => !n.read).length;
-
   const markRead = (email, id) => setStore((prev) => {
     const list = prev[email] || [];
     return { ...prev, [email]: list.map(n => (n.id === id ? { ...n, read: true } : n)) };
@@ -55,7 +51,12 @@ export const NotificationsProvider = ({ children }) => {
 
   const clearFor = (email) => setStore((prev) => ({ ...prev, [email]: [] }));
 
-  const value = useMemo(() => ({ addFor, getFor, getUnreadCount, markRead, markAllRead, clearFor }), [store]);
+  const value = useMemo(() => {
+    const getFor = (email) => (store[email] || []).slice().sort((a, b) => b.createdAt - a.createdAt);
+    const getUnreadCount = (email) => (store[email] || []).filter(n => !n.read).length;
+    
+    return { addFor, getFor, getUnreadCount, markRead, markAllRead, clearFor };
+  }, [store]);
 
   return (
     <NotificationsContext.Provider value={value}>{children}</NotificationsContext.Provider>

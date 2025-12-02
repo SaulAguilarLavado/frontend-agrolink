@@ -20,25 +20,17 @@ import {
 import AgricultureIcon from '@mui/icons-material/Agriculture';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
-const statusOptions = [
-  { value: 'Activo', label: 'Activo' },
-  { value: 'Cosechado', label: 'Cosechado' },
-];
-
-
 const CropDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [crop, setCrop] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [status, setStatus] = useState('');
   const [message, setMessage] = useState(null);
 
   const fetchCrop = useCallback(async () => {
     try {
       const res = await dataService.getCropById(id);
       setCrop(res.data);
-      setStatus(res.data?.status || 'Activo');
     } catch (e) {
       console.error(e);
       setMessage({ type: 'error', text: 'No se pudo cargar el cultivo' });
