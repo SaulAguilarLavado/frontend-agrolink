@@ -1,22 +1,31 @@
-import React, { useState } from 'react';
-import authService from '../services/authService';
-import { Container, Grid, Card, CardContent, Typography, TextField, MenuItem, Button, Alert } from '@mui/material';
+import React, { useState } from "react";
+import authService from "../services/authService";
+import {
+  Container,
+  Paper,
+  Typography,
+  TextField,
+  MenuItem,
+  Button,
+  Alert,
+  Box,
+  Stack,
+} from "@mui/material";
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    lastname: '',
-    email: '',
-    password: '',
-    address: '',
-    phone: '',
-    userType: 'agricultor',
+    name: "",
+    lastname: "",
+    email: "",
+    password: "",
+    address: "",
+    phone: "",
+    userType: "agricultor",
   });
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('');
-  const [successful, setSuccessful] = useState(false);
 
-  const { name, lastname, email, password, address, phone, userType } = formData;
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [successful, setSuccessful] = useState(false);
 
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -24,13 +33,13 @@ const Register = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    setMessage('');
+    setMessage("");
     setSuccessful(false);
     setLoading(true);
 
     try {
       const response = await authService.register(formData);
-      setMessage(response.data || 'Registro correcto');
+      setMessage(response.data || "Registro exitoso");
       setSuccessful(true);
     } catch (error) {
       const resMessage =
@@ -45,70 +54,136 @@ const Register = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', py: 6 }}>
-      <Card sx={{ width: '100%', maxWidth: 920, boxShadow: 3, borderRadius: 2, overflow: 'hidden' }}>
-        <Grid container>
-          <Grid item xs={12} md={6}>
-            <CardContent sx={{ p: { xs: 3, md: 4 } }}>
-              <Typography variant="h5" gutterBottom>Crea tu cuenta</Typography>
-              <Typography variant="body2" color="text.secondary">Regístrate para comenzar a publicar y conectar.</Typography>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        backgroundImage: 'url("/images/fondo-agrolink.jpeg")',
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        p: 3,
+      }}
+    >
+      <Container
+        maxWidth="sm"
+        sx={{
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          py: 4,
+        }}
+      >
+        <Paper
+          elevation={6}
+          sx={{
+            p: 4,
+            width: "100%",
+            maxWidth: 520,
+            borderRadius: 3,
+            background: "rgba(255,255,255,0.85)",
+            backdropFilter: "blur(8px)",
+          }}
+        >
 
-              <form onSubmit={handleRegister}>
-                <Grid container spacing={3} sx={{ mt: 2 }}>
-                  <Grid item xs={12} md={6}>
-                    <TextField label="Nombre" name="name" value={name} onChange={onChange} required fullWidth variant="outlined" />
-                  </Grid>
-                  <Grid item xs={12} md={6}>
-                    <TextField label="Apellido" name="lastname" value={lastname} onChange={onChange} required fullWidth variant="outlined" />
-                  </Grid>
+          {/* HEADER */}
+          <Box textAlign="center" sx={{ mb: 4 }}>
+            <Typography variant="h4" fontWeight={700}>
+              Crear cuenta
+            </Typography>
+            <Typography variant="body1" sx={{ opacity: 0.8 }}>
+              Únete a AgroLink y gestiona toda tu producción fácilmente 🌱
+            </Typography>
+          </Box>
 
-                  <Grid item xs={12} md={6}>
-                    <TextField label="Correo Electrónico" name="email" value={email} onChange={onChange} required fullWidth variant="outlined" />
-                  </Grid>
+          {/* FORMULARIO VERTICAL */}
+          <form onSubmit={handleRegister}>
+            <Stack spacing={2} sx={{ width: "75%", mx: "auto" }}>
+              <TextField
+                label="Nombre *"
+                name="name"
+                onChange={onChange}
+                required
+                fullWidth
+              />
 
-                  <Grid item xs={12} md={6}>
-                    <TextField label="Contraseña" type="password" name="password" value={password} onChange={onChange} required fullWidth variant="outlined" />
-                  </Grid>
+              <TextField
+                label="Apellido *"
+                name="lastname"
+                onChange={onChange}
+                required
+                fullWidth
+              />
 
-                  <Grid item xs={12} md={6}>
-                    <TextField label="Dirección" name="address" value={address} onChange={onChange} fullWidth variant="outlined" />
-                  </Grid>
+              <TextField
+                label="Correo Electrónico *"
+                name="email"
+                onChange={onChange}
+                required
+                fullWidth
+              />
 
-                  <Grid item xs={12} md={6}>
-                    <TextField label="Teléfono" name="phone" value={phone} onChange={onChange} fullWidth variant="outlined" />
-                  </Grid>
+              <TextField
+                label="Contraseña *"
+                type="password"
+                name="password"
+                onChange={onChange}
+                required
+                fullWidth
+              />
 
-                  <Grid item xs={12} md={6}>
-                    <TextField select label="Tipo de Usuario" name="userType" value={userType} onChange={onChange} fullWidth variant="outlined">
-                      <MenuItem value="agricultor">Agricultor</MenuItem>
-                      <MenuItem value="comprador">Comprador</MenuItem>
-                    </TextField>
-                  </Grid>
+              <TextField
+                label="Dirección"
+                name="address"
+                onChange={onChange}
+                fullWidth
+              />
 
-                  <Grid item xs={12} md={6} sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Button type="submit" variant="contained" color="success" size="large" disabled={loading} fullWidth>{loading ? 'Cargando...' : 'Registrarse'}</Button>
-                  </Grid>
-                </Grid>
-              </form>
+              <TextField
+                label="Teléfono"
+                name="phone"
+                onChange={onChange}
+                fullWidth
+              />
 
-              {message && (
-                <div style={{ marginTop: 16 }}>
-                  <Alert severity={successful ? 'success' : 'error'}>{message}</Alert>
-                </div>
-              )}
-            </CardContent>
-          </Grid>
+              <TextField
+                select
+                label="Tipo de Usuario"
+                name="userType"
+                value={formData.userType}
+                onChange={onChange}
+                fullWidth
+              >
+                <MenuItem value="agricultor">Agricultor</MenuItem>
+                <MenuItem value="comprador">Comprador</MenuItem>
+              </TextField>
 
-          <Grid item xs={12} md={6} sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', justifyContent: 'center', backgroundColor: 'primary.main', color: 'white', p: 3 }}>
-            <div style={{ textAlign: 'center' }}>
-              <Typography variant="h6">Únete a la comunidad</Typography>
-              <Typography variant="body2" sx={{ opacity: 0.9 }}>Publica productos, contacta compradores y gestiona tu producción desde un solo lugar.</Typography>
-              <Button variant="outlined" color="inherit" sx={{ mt: 2 }}>Ver beneficios</Button>
-            </div>
-          </Grid>
-        </Grid>
-      </Card>
-    </Container>
+              <Box textAlign="center" sx={{ mt: 2 }}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="success"
+                  size="large"
+                  sx={{ width: "50%" }}
+                  disabled={loading}
+                >
+                  {loading ? "Cargando..." : "REGISTRARSE"}
+                </Button>
+              </Box>
+            </Stack>
+
+          </form>
+
+          {message && (
+            <Alert severity={successful ? "success" : "error"} sx={{ mt: 3 }}>
+              {message}
+            </Alert>
+          )}
+        </Paper>
+      </Container>
+    </Box>
   );
 };
 

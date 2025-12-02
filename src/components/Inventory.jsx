@@ -61,6 +61,7 @@ const Inventory = (props) => { // <-- Volvemos a recibir 'props'
         unitOfMeasure: p.unitOfMeasure || p.unidad || 'unidad',
         description: p.description || p.descripcion || '',
         farmer: p.farmer || p.agricultor || {},
+        imageUrl: p.imageUrl || p.imagenUrl || p.imagen_url || p.imagen || null,
       }));
 
       // Si aún no hay items, intenta mostrar productos crudos como fallback al menos para depurar
@@ -184,6 +185,20 @@ const Inventory = (props) => { // <-- Volvemos a recibir 'props'
                     },
                     background: 'rgba(255,255,255,0.95)'
                   }}>
+                    {p.imageUrl && (
+                      <Box
+                        component="img"
+                        src={p.imageUrl}
+                        alt={p.name}
+                        sx={{
+                          width: '100%',
+                          height: 200,
+                          objectFit: 'cover',
+                          borderTopLeftRadius: 12,
+                          borderTopRightRadius: 12
+                        }}
+                      />
+                    )}
                     <CardContent sx={{ flexGrow: 1 }}>
                       <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#00f2fe', mb: 2 }}>
                         {p.name}
@@ -207,16 +222,6 @@ const Inventory = (props) => { // <-- Volvemos a recibir 'props'
 
                       {isMyInventory && (
                         <Stack spacing={1} sx={{ mt: 3 }}>
-                          <Button 
-                            variant="contained" 
-                            color="success" 
-                            size="small" 
-                            fullWidth
-                            startIcon={<StorefrontIcon />}
-                            onClick={() => window.alert('Funcionalidad de publicación próximamente')}
-                          >
-                            Poner a la venta
-                          </Button>
                           <Button 
                             variant="outlined" 
                             size="small" 

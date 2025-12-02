@@ -1,20 +1,74 @@
-import React, { useMemo } from 'react';
-import { Container, Typography, Card, CardContent, Stack, Button, Alert, Box, Paper, Chip, Badge } from '@mui/material';
-import { useNotifications } from '../context/NotificationsContext';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Container, Typography, Card, CardContent, Stack, Button, Alert, Box, Paper, Chip, Badge, CircularProgress } from '@mui/material';
 import authService from '../services/authService';
+import dataService from '../services/dataService';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 const Notifications = () => {
   const currentUser = authService.getCurrentUser();
-  const email = currentUser?.email || null;
-  const { getFor, markRead, markAllRead, clearFor, getUnreadCount } = useNotifications() || {};
+  const userEmail = currentUser?.email; // Usar solo el email como dependencia
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const list = useMemo(() => (email && getFor ? getFor(email) : []), [email, getFor]);
-  const unread = useMemo(() => (email && getUnreadCount ? getUnreadCount(email) : 0), [email, getUnreadCount, list]);
+  const loadNotifications = useCallback(async () => {
+    if (!userEmail) {
+      setLoading(false);
+      return;
+    }
+    
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await dataService.getMyNotifications();
+      setNotifications(response.data || []);
+    } catch (err) {
+      console.error('Error al cargar notificaciones:', err);
+      setError('No se pudieron cargar las notificaciones');
+    } finally {
+      setLoading(false);
+    }
+  }, [userEmail]);
 
-  if (!email) {
+  useEffect(() => {
+    loadNotifications();
+  }, [loadNotifications]);
+
+  const handleMarkAsRead = useCallback(async (id) => {
+    try {
+      await dataService.markNotificationAsRead(id);
+      setNotifications(prev => 
+        prev.map(n => n.id === id ? { ...n, leido: true } : n)
+      );
+    } catch (err) {
+      console.error('Error al marcar como leída:', err);
+    }
+  }, []);
+
+  const handleMarkAllAsRead = useCallback(async () => {
+    try {
+      await dataService.markAllNotificationsAsRead();
+      setNotifications(prev => prev.map(n => ({ ...n, leido: true })));
+    } catch (err) {
+      console.error('Error al marcar todas como leídas:', err);
+    }
+  }, []);
+
+  const handleClearAll = useCallback(async () => {
+    try {
+      await dataService.clearAllNotifications();
+      setNotifications([]);
+    } catch (err) {
+      console.error('Error al limpiar notificaciones:', err);
+    }
+  }, []);
+
+  const unread = notifications.filter(n => !n.leido).length;
+
+  if (!currentUser) {
     return (
       <Box sx={{ 
         minHeight: '100vh',
@@ -26,6 +80,20 @@ const Notifications = () => {
             <Alert severity="info">Debes iniciar sesión para ver tus notificaciones.</Alert>
           </Paper>
         </Container>
+      </Box>
+    );
+  }
+
+  if (loading) {
+    return (
+      <Box sx={{ 
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+        <CircularProgress size={60} />
       </Box>
     );
   }
@@ -54,9 +122,20 @@ const Notifications = () => {
             </Box>
             <Stack direction="row" spacing={1}>
               <Button 
+                variant="contained"
+                startIcon={<RefreshIcon />}
+                onClick={loadNotifications}
+                sx={{
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  '&:hover': { background: 'linear-gradient(135deg, #5568d3 0%, #6a4293 100%)' }
+                }}
+              >
+                Actualizar
+              </Button>
+              <Button 
                 variant="contained" 
-                onClick={() => markAllRead(email)} 
-                disabled={list.length === 0}
+                onClick={handleMarkAllAsRead} 
+                disabled={notifications.length === 0 || unread === 0}
                 sx={{
                   background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
                   '&:hover': { background: 'linear-gradient(135deg, #3a8cce 0%, #00d4e6 100%)' }
@@ -67,8 +146,8 @@ const Notifications = () => {
               <Button 
                 variant="outlined" 
                 color="error" 
-                onClick={() => clearFor(email)} 
-                disabled={list.length === 0}
+                onClick={handleClearAll} 
+                disabled={notifications.length === 0}
               >
                 Limpiar
               </Button>
@@ -76,20 +155,26 @@ const Notifications = () => {
           </Stack>
         </Paper>
 
-        {list.length === 0 ? (
+        {error && (
+          <Paper elevation={2} sx={{ p: 2, mb: 3, borderRadius: 3, background: 'rgba(255,255,255,0.95)' }}>
+            <Alert severity="error">{error}</Alert>
+          </Paper>
+        )}
+
+        {notifications.length === 0 ? (
           <Paper elevation={2} sx={{ p: 4, textAlign: 'center', borderRadius: 3, background: 'rgba(255,255,255,0.95)' }}>
             <NotificationsIcon sx={{ fontSize: 64, color: '#ccc', mb: 2 }} />
             <Typography variant="h6" color="text.secondary">No tienes notificaciones</Typography>
           </Paper>
         ) : (
           <Stack spacing={2}>
-            {list.map((n) => (
+            {notifications.map((n) => (
               <Card 
                 key={n.id} 
                 sx={{ 
                   borderRadius: 3,
                   background: 'rgba(255,255,255,0.95)',
-                  borderLeft: n.read ? '4px solid #e0e0e0' : '4px solid #4facfe',
+                  borderLeft: n.leido ? '4px solid #e0e0e0' : '4px solid #4facfe',
                   transition: 'transform 0.3s, box-shadow 0.3s',
                   '&:hover': {
                     transform: 'translateX(4px)',
@@ -101,10 +186,10 @@ const Notifications = () => {
                   <Stack direction="row" justifyContent="space-between" alignItems="flex-start" spacing={2}>
                     <Box sx={{ flexGrow: 1 }}>
                       <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
-                        <Typography variant="h6" sx={{ fontWeight: 'bold', color: n.read ? '#666' : '#00f2fe' }}>
-                          {n.title}
+                        <Typography variant="h6" sx={{ fontWeight: 'bold', color: n.leido ? '#666' : '#00f2fe' }}>
+                          {n.mensaje}
                         </Typography>
-                        {!n.read && (
+                        {!n.leido && (
                           <Chip 
                             label="Nueva" 
                             color="primary" 
@@ -113,19 +198,16 @@ const Notifications = () => {
                           />
                         )}
                       </Stack>
-                      <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
-                        {n.message}
-                      </Typography>
                       <Typography variant="caption" color="text.secondary">
-                        📅 {new Date(n.createdAt).toLocaleString()}
+                        📅 {new Date(n.fechaCreacion).toLocaleString('es-ES')}
                       </Typography>
                     </Box>
-                    {!n.read && (
+                    {!n.leido && (
                       <Button 
                         size="small" 
                         variant="outlined"
                         startIcon={<CheckCircleIcon />}
-                        onClick={() => markRead(email, n.id)}
+                        onClick={() => handleMarkAsRead(n.id)}
                         sx={{
                           borderColor: '#4facfe',
                           color: '#4facfe',

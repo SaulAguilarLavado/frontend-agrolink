@@ -206,6 +206,23 @@ const Marketplace = () => {
                   },
                   background: 'rgba(255,255,255,0.95)'
                 }}>
+                  {(p.imageUrl || p.imagenUrl || p.imagen_url || p.imagen) && (
+                    <Box
+                      component="img"
+                      src={p.imageUrl || p.imagenUrl || p.imagen_url || p.imagen}
+                      alt={p.name}
+                      sx={{
+                        width: '100%',
+                        height: 200,
+                        objectFit: 'cover',
+                        borderTopLeftRadius: 12,
+                        borderTopRightRadius: 12
+                      }}
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                      }}
+                    />
+                  )}
                   <CardContent sx={{ flexGrow: 1, pb: 0 }}>
                     <Typography variant="h5" gutterBottom sx={{ 
                       fontWeight: 'bold',

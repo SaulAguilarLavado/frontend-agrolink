@@ -18,6 +18,23 @@ const createProduct = (productData) => {
   return axios.post(API_URL + 'productos', productData, { headers: getAuthHeader() });
 };
 
+// Subir imagen de producto
+const uploadProductImage = (productId, imageFile) => {
+  const formData = new FormData();
+  formData.append('file', imageFile); // <-- CORREGIDO: el backend espera 'file', no 'imagen'
+  
+  return axios.post(
+    API_URL + `productos/${productId}/imagen`, 
+    formData, 
+    { 
+      headers: {
+        ...getAuthHeader(),
+        'Content-Type': 'multipart/form-data'
+      }
+    }
+  );
+};
+
 // --- FUNCIÓN NUEVA PARA OBTENER PRODUCTOS ---
 const getAllProducts = () => {
   // Hacemos un GET a /productos, enviando el encabezado de autorización
@@ -187,10 +204,20 @@ const getSalesReport = () => axios.get(API_URL + 'reports/sales', { headers: get
 const getHarvestReport = () => axios.get(API_URL + 'reports/harvests', { headers: getAuthHeader() });
 const getCropReport = () => axios.get(API_URL + 'reports/crops', { headers: getAuthHeader() });
 
-
+// --- NOTIFICACIONES (RF10) ---
+const getMyNotifications = () => axios.get(API_URL + 'notificaciones/my', { headers: getAuthHeader() });
+const markNotificationAsRead = (notificationId) => axios.put(API_URL + `notificaciones/${notificationId}/read`, {}, { headers: getAuthHeader() });
+const markAllNotificationsAsRead = () => axios.put(API_URL + 'notificaciones/read-all', {}, { headers: getAuthHeader() });
+const deleteNotification = (notificationId) => axios.delete(API_URL + `notificaciones/${notificationId}`, { headers: getAuthHeader() });
+const clearAllNotifications = () => axios.delete(API_URL + 'notificaciones/clear-all', { headers: getAuthHeader() });
+const getUnreadNotificationsCount = async () => {
+  const response = await axios.get(API_URL + 'notificaciones/unread-count', { headers: getAuthHeader() });
+  return response.data; // Retorna solo el número, no todo el objeto de respuesta
+};
 
 const dataService = {
   createProduct,
+  uploadProductImage,
   getAllProducts, // <-- EXPORTAR LA NUEVA FUNCIÓN
   filterProducts,
   registerCrop,
@@ -215,6 +242,13 @@ const dataService = {
   getSalesReport,
   getHarvestReport,
   getCropReport,
+  // Notificaciones (RF10)
+  getMyNotifications,
+  markNotificationAsRead,
+  markAllNotificationsAsRead,
+  deleteNotification,
+  clearAllNotifications,
+  getUnreadNotificationsCount,
 };
 
 export default dataService;
