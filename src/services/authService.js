@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode'; // decode helper (used for real tokens)
 
-const API_URL = 'http://localhost:8080/auth/';
+const API_URL = `${process.env.REACT_APP_API_URL || 'http://localhost:8080'}/auth/`;
 
 const login = (email, password) => {
   // Soporte de cuentas demo locales (no tocan la API ni la base de datos)
