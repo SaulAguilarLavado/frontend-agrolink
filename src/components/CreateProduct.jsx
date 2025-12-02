@@ -19,9 +19,6 @@ const CreateProduct = () => {
   const [errors, setErrors] = useState({ pricePerUnit: '', availableStock: '' });
   const [harvests, setHarvests] = useState([]);
   const [selectedHarvestId, setSelectedHarvestId] = useState('');
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
-  const [uploadingImage, setUploadingImage] = useState(false);
 
   const { name, description, pricePerUnit, unitOfMeasure, availableStock } = formData;
 
@@ -105,39 +102,6 @@ const CreateProduct = () => {
     }
   };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      // Validar que sea una imagen
-      if (!file.type.startsWith('image/')) {
-        setMessage('Por favor selecciona un archivo de imagen válido');
-        setSuccessful(false);
-        return;
-      }
-      
-      // Validar tamaño (máximo 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        setMessage('La imagen no debe superar los 5MB');
-        setSuccessful(false);
-        return;
-      }
-      
-      setSelectedImage(file);
-      
-      // Crear vista previa
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const removeImage = () => {
-    setSelectedImage(null);
-    setImagePreview(null);
-  };
-
   const handleCreateProduct = async (e) => {
     e.preventDefault();
     setMessage('');
@@ -167,38 +131,12 @@ const CreateProduct = () => {
     };
 
     try {
-      // Primero crear el producto
+      // Crear el producto
       const response = await dataService.createProduct(productData);
-      const createdProduct = response.data;
-      const productId = createdProduct.id || createdProduct.productId;
       
-      // Si hay imagen seleccionada, subirla
-      if (selectedImage && productId) {
-        setUploadingImage(true);
-        try {
-          console.log('📤 Subiendo imagen para producto ID:', productId);
-          console.log('📁 Archivo:', selectedImage.name, 'Tipo:', selectedImage.type, 'Tamaño:', selectedImage.size);
-          
-          const imgResponse = await dataService.uploadProductImage(productId, selectedImage);
-          
-          console.log('✅ Respuesta completa:', imgResponse);
-          console.log('✅ Datos del producto actualizado:', imgResponse.data);
-          console.log('🖼️ URL de la imagen:', imgResponse.data?.imageUrl || imgResponse.data?.imagenUrl || imgResponse.data?.imagen_url);
-          
-          setMessage('¡Producto e imagen creados exitosamente!');
-        } catch (imgError) {
-          console.error('❌ Error al subir imagen:', imgError);
-          console.error('📄 Response error:', imgError.response?.data);
-          console.error('📄 Status:', imgError.response?.status);
-          setMessage('Producto creado, pero hubo un error al subir la imagen: ' + (imgError.response?.data || imgError.message));
-        } finally {
-          setUploadingImage(false);
-        }
-      } else {
-        setMessage('¡Producto creado exitosamente!');
-      }
-      
+      setMessage('¡Producto creado exitosamente!');
       setSuccessful(true);
+      
       // Redirect to inventory so user can see the created product
       setTimeout(() => navigate('/inventory'), 1200);
     } catch (error) {
@@ -307,101 +245,13 @@ const CreateProduct = () => {
                   />
                 </Grid>
 
-                {/* Campo de carga de imagen */}
-                <Grid item xs={12}>
-                  <Paper 
-                    elevation={2} 
-                    sx={{ 
-                      p: 3, 
-                      border: '2px dashed #764ba2',
-                      borderRadius: 2,
-                      textAlign: 'center',
-                      background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%)'
-                    }}
-                  >
-                    <Typography variant="h6" gutterBottom sx={{ color: '#764ba2', fontWeight: 600 }}>
-                      Imagen del Producto
-                    </Typography>
-                    
-                    {!imagePreview ? (
-                      <Box>
-                        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                          Selecciona una imagen para tu producto (máx. 5MB)
-                        </Typography>
-                        <Button
-                          variant="outlined"
-                          component="label"
-                          sx={{ 
-                            borderColor: '#764ba2',
-                            color: '#764ba2',
-                            '&:hover': {
-                              borderColor: '#633a8a',
-                              background: 'rgba(118, 75, 162, 0.08)'
-                            }
-                          }}
-                        >
-                          Seleccionar Imagen
-                          <input
-                            type="file"
-                            hidden
-                            accept="image/*"
-                            onChange={handleImageChange}
-                          />
-                        </Button>
-                      </Box>
-                    ) : (
-                      <Box>
-                        <Box
-                          component="img"
-                          src={imagePreview}
-                          alt="Vista previa"
-                          sx={{
-                            maxWidth: '100%',
-                            maxHeight: 300,
-                            borderRadius: 2,
-                            mb: 2,
-                            boxShadow: 3
-                          }}
-                        />
-                        <Stack direction="row" spacing={2} justifyContent="center">
-                          <Button
-                            variant="outlined"
-                            component="label"
-                            size="small"
-                            sx={{ 
-                              borderColor: '#764ba2',
-                              color: '#764ba2'
-                            }}
-                          >
-                            Cambiar Imagen
-                            <input
-                              type="file"
-                              hidden
-                              accept="image/*"
-                              onChange={handleImageChange}
-                            />
-                          </Button>
-                          <Button
-                            variant="outlined"
-                            color="error"
-                            size="small"
-                            onClick={removeImage}
-                          >
-                            Quitar Imagen
-                          </Button>
-                        </Stack>
-                      </Box>
-                    )}
-                  </Paper>
-                </Grid>
-
                 <Grid item xs={12}>
                   <Button 
                     type="submit" 
                     variant="contained" 
                     size="large"
                     fullWidth
-                    disabled={loading || uploadingImage || !!errors.pricePerUnit || !!errors.availableStock}
+                    disabled={loading || !!errors.pricePerUnit || !!errors.availableStock}
                     sx={{
                       background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                       fontWeight: 'bold',
@@ -411,7 +261,7 @@ const CreateProduct = () => {
                       }
                     }}
                   >
-                    {loading || uploadingImage ? 'Guardando...' : 'Crear Producto'}
+                    {loading ? 'Guardando...' : 'Crear Producto'}
                   </Button>
                 </Grid>
               </Grid>
