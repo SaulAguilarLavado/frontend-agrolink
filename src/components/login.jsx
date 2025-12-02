@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import authService from '../services/authService';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
+import {
+  Container, Grid, Card, CardContent, Typography, TextField, Button,
+  Checkbox, FormControlLabel, Stack, CircularProgress, Alert, Box, Paper
+} from '@mui/material';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -35,114 +39,158 @@ const Login = () => {
   };
 
   return (
-    <div className="d-flex align-items-center justify-content-center min-vh-100 bg-light">
-      <div className="card shadow-lg rounded-4 login-card">
-        <div className="row g-0">
-          <div className="col-md-5 d-none d-md-block card-left p-4 rounded-start-4">
-            <div className="h-100 d-flex flex-column justify-content-center text-white">
-              <h3 className="mb-3">Bienvenido a Agrolink</h3>
-              <p className="small opacity-85">Conecta agricultores y compradores, gestiona cultivos y más.</p>
-              <div className="mt-4">
-                <button className="btn btn-outline-light btn-sm me-2">Saber más</button>
-              </div>
-            </div>
-          </div>
-          <div className="col-md-7 p-4">
-            <div className="card-body">
-              <h4 className="card-title mb-3">Iniciar Sesión</h4>
-              <p className="text-muted small">Usa tu cuenta para acceder al panel</p>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        backgroundImage: 'url("/images/fondo-agrolink.jpeg")',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        display: 'flex',
+        alignItems: 'center',
+        py: 4
+      }}
+    >
+      <Container maxWidth="sm">
+        <Paper
+          elevation={6}
+          sx={{
+            p: 4,
+            borderRadius: 4,
+            background: 'rgba(255,255,255,0.85)',
+            backdropFilter: 'blur(6px)'
+          }}
+        >
+          {/* Logo + Texto */}
+          <Box textAlign="center" sx={{ mb: 3 }}>
+            <img
+              src="/images/logo-agrolink.png"
+              alt="Agrolink"
+              style={{ width: 160, marginBottom: 12 }}
+            />
+            <Typography variant="body1" sx={{ color: 'text.secondary' }}>
+              Conecta agricultores y compradores de manera simple.
+            </Typography>
+          </Box>
 
-              <form onSubmit={handleLogin}>
-                <div className="mb-3">
-                  <label htmlFor="email" className="form-label">Correo Electrónico</label>
-                  <input
-                    id="email"
-                    type="email"
-                    className="form-control"
-                    name="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    placeholder="tucorreo@ejemplo.com"
-                  />
-                </div>
+          <Typography variant="h5" fontWeight={700} textAlign="center" gutterBottom>
+            Iniciar Sesión
+          </Typography>
 
-                <div className="mb-3">
-                  <label htmlFor="password" className="form-label">Contraseña</label>
-                  <div className="input-group">
-                    <input
-                      id="password"
-                      type={showPassword ? 'text' : 'password'}
-                      className="form-control"
-                      name="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                      placeholder="••••••••"
-                    />
-                    <button type="button" className="btn btn-outline-secondary" onClick={() => setShowPassword(!showPassword)} aria-label="Toggle password">
-                      {showPassword ? 'Ocultar' : 'Mostrar'}
-                    </button>
-                  </div>
-                </div>
+          <form onSubmit={handleLogin}>
+            <Stack spacing={2}>
 
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                  <div className="form-check">
-                    <input className="form-check-input" type="checkbox" id="remember" />
-                    <label className="form-check-label small" htmlFor="remember">Recuérdame</label>
-                  </div>
-                  <Link to="/forgot-password" className="small">¿Olvidaste tu contraseña?</Link>
-                </div>
+              <TextField
+                label="Correo Electrónico"
+                type="email"
+                fullWidth
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
 
-                <div className="d-grid mb-3">
-                  <button className="btn btn-primary btn-lg btn-gradient" type="submit" disabled={loading}>
-                    {loading && <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>}
-                    Entrar
-                  </button>
-                </div>
+              <Stack direction="row" spacing={1} alignItems="center">
+                <TextField
+                  label="Contraseña"
+                  type={showPassword ? 'text' : 'password'}
+                  fullWidth
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <Button
+                  variant="outlined"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? 'Ocultar' : 'Mostrar'}
+                </Button>
+              </Stack>
 
-                <div className="text-center mb-3">
-                  <span className="small text-muted">o ingresa con</span>
-                </div>
+              <Stack direction="row" justifyContent="space-between">
+                <FormControlLabel control={<Checkbox />} label="Recuérdame" />
+                <RouterLink to="/forgot-password" style={{ textDecoration: 'none' }}>
+                  <Typography variant="body2" color="primary">
+                    ¿Olvidaste tu contraseña?
+                  </Typography>
+                </RouterLink>
+              </Stack>
 
-                <div className="d-flex gap-2 mb-3">
-                  <button type="button" className="btn btn-outline-secondary w-100">Google</button>
-                  <button type="button" className="btn btn-outline-secondary w-100">Facebook</button>
-                </div>
+              <Button
+                type="submit"
+                variant="contained"
+                color="success"
+                size="large"
+                fullWidth
+                sx={{ py: 1.5, fontSize: '1rem' }}
+                disabled={loading}
+                startIcon={loading ? <CircularProgress size={18} /> : null}
+              >
+                Entrar
+              </Button>
 
-                <div className="text-center mb-2">
-                  <span className="small text-muted">O usa una cuenta de prueba</span>
-                </div>
-                <div className="d-flex gap-2 mb-3">
-                  <button type="button" className="btn btn-sm btn-success w-50" onClick={async () => {
-                    setLoading(true); setMessage('');
+              <Typography variant="body2" textAlign="center">
+                o ingresa con
+              </Typography>
+
+              <Stack direction="row" spacing={2}>
+                <Button fullWidth variant="outlined">Google</Button>
+                <Button fullWidth variant="outlined">Facebook</Button>
+              </Stack>
+
+              <Typography variant="body2" textAlign="center">
+                O usa una cuenta de prueba
+              </Typography>
+
+              <Stack direction="row" spacing={2}>
+                <Button
+                  variant="contained"
+                  color="success"
+                  fullWidth
+                  onClick={async () => {
                     try {
-                      const res = await authService.login('demo@agricultor.test','agro123');
-                      if (res.data && res.data.accessToken) { localStorage.setItem('token', res.data.accessToken); navigate('/dashboard'); window.location.reload(); }
-                    } catch (e) { setMessage('Demo login falló'); } finally { setLoading(false); }
-                  }}>Demo Agricultor</button>
-                  <button type="button" className="btn btn-sm btn-primary w-50" onClick={async () => {
-                    setLoading(true); setMessage('');
+                      const res = await authService.login('demo@agricultor.test', 'agro123');
+                      if (res.data.accessToken) {
+                        localStorage.setItem('token', res.data.accessToken);
+                        navigate('/dashboard');
+                        window.location.reload();
+                      }
+                    } catch {
+                      setMessage('Demo Agricultor falló');
+                    }
+                  }}
+                >
+                  Demo Agricultor
+                </Button>
+
+                <Button
+                  variant="contained"
+                  fullWidth
+                  onClick={async () => {
                     try {
-                      const res = await authService.login('demo@comprador.test','compra123');
-                      if (res.data && res.data.accessToken) { localStorage.setItem('token', res.data.accessToken); navigate('/dashboard'); window.location.reload(); }
-                    } catch (e) { setMessage('Demo login falló'); } finally { setLoading(false); }
-                  }}>Demo Comprador</button>
-                </div>
+                      const res = await authService.login('demo@comprador.test', 'compra123');
+                      if (res.data.accessToken) {
+                        localStorage.setItem('token', res.data.accessToken);
+                        navigate('/dashboard');
+                        window.location.reload();
+                      }
+                    } catch {
+                      setMessage('Demo Comprador falló');
+                    }
+                  }}
+                >
+                  Demo Comprador
+                </Button>
+              </Stack>
 
-                {message && (
-                  <div className="alert alert-danger mt-2" role="alert">{message}</div>
-                )}
+              {message && <Alert severity="error">{message}</Alert>}
 
-                <div className="text-center mt-3">
-                  <small>¿No tienes cuenta? <a href="/register">Regístrate</a></small>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+              <Typography textAlign="center" variant="body2">
+                ¿No tienes cuenta? <a href="/register">Regístrate</a>
+              </Typography>
+            </Stack>
+          </form>
+        </Paper>
+      </Container>
+    </Box>
   );
 };
 

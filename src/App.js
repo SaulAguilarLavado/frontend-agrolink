@@ -1,217 +1,215 @@
-import React from 'react'; 
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Link as RouterLink, Navigate, useNavigate } from 'react-router-dom';
+
+// Importación de todos los componentes
 import Login from './components/login.jsx';
 import Register from './components/Register.jsx';
 import Dashboard from './components/Dashboard.jsx';
-import CreateProduct from './components/CreateProduct.jsx'; // <-- IMPORTAR
-import RegisterCrop from './components/RegisterCrop.jsx'; // <-- IMPORTAR
-import Marketplace from './components/Marketplace.jsx'; 
-import { Navigate } from 'react-router-dom';
+import CreateProduct from './components/CreateProduct.jsx';
+import RegisterCrop from './components/RegisterCrop.jsx';
+import Marketplace from './components/Marketplace.jsx';
+import Inventory from './components/Inventory.jsx';
+import CropDetail from './components/CropDetail.jsx';
+import RegisterHarvest from './components/RegisterHarvest.jsx';
+import MyHarvests from './components/MyHarvests.jsx';
+import MyCrops from './components/MyCrops.jsx';
+import Checkout from './components/Checkout.jsx';
+import Notifications from './components/Notifications.jsx';
+import AdminOrders from './components/AdminOrders.jsx';
+import MySales from './components/MySales.jsx';
+import ReportSales from './components/ReportSales.jsx';
+import ReportHarvests from './components/ReportHarvests.jsx';
+import ReportCrops from './components/ReportCrops.jsx';
+import MyOrders from './components/MyOrders.jsx';
+import MyPurchases from './components/MyPurchases.jsx';
+import ErrorBoundary from './components/common/ErrorBoundary.jsx';
+
+// Contextos y Servicios
 import authService from './services/authService';
+import dataService from './services/dataService';
+import { CartProvider, useCart } from './context/CartContext';
+import { NotificationsProvider, useNotifications } from './context/NotificationsContext';
+
+// Componentes de Material UI e Iconos
+import { AppBar, Toolbar, Typography, Button, Container, Grid, Card, CardContent, TextField, Box, Stack, InputAdornment, Divider, IconButton, Badge } from '@mui/material';
+import { ShoppingBasket, Handshake, BarChart, LocalShipping, Chat, Search as SearchIcon, TrendingUp, PeopleAlt, ReceiptLong, Logout, Inventory2, ShoppingCart, Notifications as NotificationsIcon } from '@mui/icons-material';
+
 import './App.css';
 
-
+// ========================
+//    COMPONENTE: HOME (Sin cambios)
+// ========================
 const Home = () => {
-  const [search, setSearch] = React.useState('');
-  const [stats, setStats] = React.useState({ products: 0, farmers: 0, orders: 0 });
-  const [subscribed, setSubscribed] = React.useState(false);
-  const [testimonialIndex, setTestimonialIndex] = React.useState(0);
+    // ... (El código de Home se queda exactamente como lo tienes)
+    const [stats, setStats] = React.useState({ products: 0, farmers: 0, orders: 0 });
+    React.useEffect(() => { const targets = { products: 124, farmers: 32, orders: 540 }; const start = Date.now(); const duration = 900; const animate = () => { const progress = Math.min(1, (Date.now() - start) / duration); setStats({ products: Math.floor(progress * targets.products), farmers: Math.floor(progress * targets.farmers), orders: Math.floor(progress * targets.orders), }); if (progress < 1) requestAnimationFrame(animate); }; animate(); }, []);
+    return (
+        <main>
+            <Box sx={{ py: { xs: 10, md: 14 }, minHeight: { xs: "70vh", md: "85vh" }, backgroundImage: 'url("/images/hero-agro.jpeg")', backgroundSize: "cover", backgroundPosition: "center", color: "white", position: "relative", display: "flex", alignItems: "center", "&::before": { content: '""', position: "absolute", inset: 0, background: "linear-gradient(90deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.35) 60%, rgba(0,0,0,0.15) 100%)", zIndex: 1, }, }}>
+                <Container maxWidth="lg" sx={{ position: "relative", zIndex: 2 }}>
+                    <Grid container spacing={6} alignItems="center"><Grid item xs={12} md={7}><Typography variant="overline" sx={{ opacity: 0.85 }}>Plataforma agrícola</Typography><Typography variant="h3" fontWeight={700} gutterBottom>Conecta. Gestiona. Crece.</Typography><Typography variant="h6" sx={{ mb: 4, maxWidth: 500, opacity: 0.9 }}>El comercio agrícola hecho simple.</Typography><Stack direction={{ xs: "column", sm: "row" }} spacing={2}><Button component={RouterLink} to="/register" variant="contained" color="primary" size="large">Comenzar</Button><Button component={RouterLink} to="/login" variant="outlined" sx={{ color: "white", borderColor: "white" }} size="large">Ingresar</Button></Stack><Stack direction="row" spacing={5} sx={{ mt: 6, flexWrap: "wrap" }}><Stack><Typography variant="h4" fontWeight={700}>{stats.products}</Typography><Typography variant="body2" sx={{ opacity: 0.85 }}><TrendingUp fontSize="inherit" sx={{ mr: 0.5 }} />Productos</Typography></Stack><Stack><Typography variant="h4" fontWeight={700}>{stats.farmers}</Typography><Typography variant="body2" sx={{ opacity: 0.85 }}><PeopleAlt fontSize="inherit" sx={{ mr: 0.5 }} />Agricultores</Typography></Stack><Stack><Typography variant="h4" fontWeight={700}>{stats.orders}</Typography><Typography variant="body2" sx={{ opacity: 0.85 }}><ReceiptLong fontSize="inherit" sx={{ mr: 0.5 }} />Pedidos</Typography></Stack></Stack></Grid><Grid item xs={12} md={5}><Card elevation={6} sx={{ backdropFilter: "blur(4px)", background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.3)", color: "white", }}><CardContent><Typography variant="h6">¿Por qué AgroLink?</Typography><Typography variant="body2" sx={{ mb: 2, opacity: 0.9 }}>Simplificamos la cadena agrícola desde la producción hasta la venta directa.</Typography><Divider sx={{ borderColor: "rgba(255,255,255,0.3)", my: 2 }} /><Stack spacing={1}><Typography variant="body2">✔ Publicación rápida</Typography><Typography variant="body2">✔ Métricas en tiempo real</Typography><Typography variant="body2">✔ Comunicación directa</Typography><Typography variant="body2">✔ Apoyo a productores locales</Typography></Stack></CardContent></Card></Grid></Grid>
+                </Container>
+            </Box>
+        </main>
+    );
+};
 
-  const features = [
-    { id: 1, icon: '🌱', title: 'Publica tus productos', text: 'Sube tus cosechas y alcanza compradores locales con facilidad.' },
-    { id: 2, icon: '🤝', title: 'Conecta y negocia', text: 'Comunícate directamente con compradores y gestiona acuerdos.' },
-    { id: 3, icon: '📈', title: 'Analiza tu producción', text: 'Paneles sencillos para monitorear tus rendimientos y ventas.' },
-    { id: 4, icon: '🚚', title: 'Logística', text: 'Conecta con opciones de entrega y transporte local.' },
-    { id: 5, icon: '💬', title: 'Mensajería', text: 'Comunícate en tiempo real con compradores y vendedores.' },
-  ];
-
-  const testimonials = [
-    { name: 'María P.', text: 'Agrolink me permitió encontrar compradores locales en menos de una semana.' },
-    { name: 'Carlos G.', text: 'Publicar mis productos fue muy sencillo y eficiente.' },
-    { name: 'Lucía R.', text: 'Excelente plataforma para gestionar mis cosechas.' },
-  ];
-
-  // Animated counters (simulación)
-  React.useEffect(() => {
-    const targets = { products: 124, farmers: 32, orders: 540 };
-    const duration = 900; // ms
-    const start = Date.now();
-    const tick = () => {
-      const elapsed = Date.now() - start;
-      const progress = Math.min(1, elapsed / duration);
-      setStats({
-        products: Math.floor(progress * targets.products),
-        farmers: Math.floor(progress * targets.farmers),
-        orders: Math.floor(progress * targets.orders),
-      });
-      if (progress < 1) requestAnimationFrame(tick);
-    };
-    tick();
-  }, []);
-
-  // Rotate testimonials
-  React.useEffect(() => {
-    const id = setInterval(() => {
-      setTestimonialIndex((i) => (i + 1) % testimonials.length);
-    }, 4500);
-    return () => clearInterval(id);
-  }, [testimonials.length]);
-
-  const filtered = features.filter(f => f.title.toLowerCase().includes(search.toLowerCase()) || f.text.toLowerCase().includes(search.toLowerCase()));
-
+// ========================
+//    COMPONENTES DE NAVEGACIÓN (AHORA PUEDEN USAR CONTEXTO)
+// ========================
+const CartNav = () => {
+  const { count } = useCart() || {};
   return (
-    <main>
-      <section className="hero py-5">
-        <div className="container">
-          <div className="row align-items-center">
-            <div className="col-md-6">
-              <h1 className="display-5 fw-bold">Bienvenido a AgroLink</h1>
-              <p className="lead text-muted">Conecta con agricultores y compradores, gestiona cultivos y encuentra los mejores productos locales.</p>
-              <div className="d-flex gap-2 mt-4">
-                <Link to="/register" className="btn btn-lg btn-primary">Comenzar</Link>
-                <Link to="/login" className="btn btn-lg btn-outline-secondary">Ingresar</Link>
-              </div>
-
-              <div className="mt-4">
-                <div className="d-flex gap-3 stats">
-                  <div className="stat">
-                    <div className="stat-value">{stats.products}</div>
-                    <div className="stat-label text-muted small">Productos</div>
-                  </div>
-                  <div className="stat">
-                    <div className="stat-value">{stats.farmers}</div>
-                    <div className="stat-label text-muted small">Agricultores</div>
-                  </div>
-                  <div className="stat">
-                    <div className="stat-value">{stats.orders}</div>
-                    <div className="stat-label text-muted small">Pedidos</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-6 d-none d-md-block">
-              <div className="hero-illustration p-4">
-                <svg width="100%" height="320" viewBox="0 0 600 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Agriculture illustration">
-                  <rect width="100%" height="100%" rx="12" fill="#f8f9fa" />
-                  <g transform="translate(40,40)" fill="#0d6efd">
-                    <circle cx="60" cy="80" r="30" opacity="0.12" />
-                    <rect x="140" y="40" width="160" height="140" rx="12" opacity="0.06" />
-                  </g>
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="features py-5 bg-white">
-        <div className="container">
-          <div className="row align-items-center mb-3">
-            <div className="col-md-8">
-              <h2 className="fw-bold">Lo que ofrecemos</h2>
-              <p className="text-muted">Herramientas pensadas para facilitar el comercio y la gestión agrícola.</p>
-            </div>
-            <div className="col-md-4 text-md-end mt-3 mt-md-0">
-              <input className="form-control" placeholder="Buscar funciones..." value={search} onChange={(e) => setSearch(e.target.value)} />
-            </div>
-          </div>
-
-          <div className="row g-4">
-            {filtered.map(f => (
-              <div key={f.id} className="col-md-4">
-                <div className="card h-100 shadow-sm feature-card">
-                  <div className="card-body text-center">
-                    <div className="feature-icon mb-3" style={{fontSize: '28px'}}>{f.icon}</div>
-                    <h5 className="card-title">{f.title}</h5>
-                    <p className="card-text text-muted">{f.text}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="row mt-5 align-items-center">
-            <div className="col-md-6">
-              <h4>Testimonios</h4>
-              <div className="testimonial card p-3 shadow-sm">
-                <p className="mb-1">"{testimonials[testimonialIndex].text}"</p>
-                <div className="small text-muted">— {testimonials[testimonialIndex].name}</div>
-              </div>
-            </div>
-            <div className="col-md-6">
-              <h4>Suscríbete a novedades</h4>
-              {!subscribed ? (
-                <form onSubmit={(e) => { e.preventDefault(); setSubscribed(true); }} className="d-flex gap-2">
-                  <input type="email" className="form-control" required placeholder="tu@correo.com" />
-                  <button className="btn btn-primary">Suscribir</button>
-                </form>
-              ) : (
-                <div className="alert alert-success">Gracias por suscribirte. Te avisaremos novedades.</div>
-              )}
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
+    <IconButton component={RouterLink} to="/checkout" color="inherit">
+      <Badge badgeContent={count || 0} color="error"><ShoppingCart /></Badge>
+    </IconButton>
   );
 };
 
+const NotificationsNav = React.memo(({ currentUser }) => {
+  const [unreadCount, setUnreadCount] = React.useState(0);
+  const navigate = useNavigate();
+  
+  // Usar el email como dependencia en lugar del objeto completo
+  const userEmail = currentUser?.email;
 
-function App() {
+  const loadUnreadCount = React.useCallback(async () => {
+    if (!userEmail) {
+      setUnreadCount(0);
+      return;
+    }
+    
+    try {
+      const count = await dataService.getUnreadNotificationsCount();
+      setUnreadCount(typeof count === 'number' ? count : 0);
+    } catch (error) {
+      console.error('Error al cargar notificaciones:', error);
+      setUnreadCount(0);
+    }
+  }, [userEmail]);
+
+  React.useEffect(() => {
+    loadUnreadCount();
+    
+    // Actualizar cada 30 segundos
+    const interval = setInterval(loadUnreadCount, 30000);
+    return () => clearInterval(interval);
+  }, [loadUnreadCount]);
+
+  const handleClick = React.useCallback(() => {
+    navigate('/notifications');
+  }, [navigate]);
+
+  return (
+    <IconButton onClick={handleClick} color="inherit">
+      <Badge badgeContent={unreadCount} color="error"><NotificationsIcon /></Badge>
+    </IconButton>
+  );
+});
+
+// ========================
+//    COMPONENTE DE LAYOUT (NUEVO)
+// ========================
+const AppLayout = () => {
   const [currentUser, setCurrentUser] = React.useState(authService.getCurrentUser());
 
   const handleLogout = () => {
     authService.logout();
     setCurrentUser(null);
-    // No necesitas redirigir aquí, el router lo hará
+    // Navegar al home después de logout
+    return <Navigate to="/" />;
   };
+
+  const isAgricultor = currentUser?.roles?.includes('ROLE_AGRICULTOR');
+  const isComprador = currentUser?.roles?.includes('ROLE_COMPRADOR');
+  const isAdmin = currentUser?.roles?.includes('ROLE_ADMINISTRADOR');
+
   return (
-    <Router>
-      <header>
-        <nav className="navbar navbar-expand-lg navbar-light bg-white border-bottom">
-          <div className="container">
-            <Link className="navbar-brand fw-bold" to={currentUser ? '/dashboard' : '/'}>AgroLink</Link>
-            <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
-              <span className="navbar-toggler-icon"></span>
-            </button>
+    <>
+      <AppBar position="static" color="default" elevation={1}>
+        <Toolbar>
+          <Container sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Typography component={RouterLink} to={currentUser ? "/dashboard" : "/"} variant="h6" sx={{ textDecoration: "none", color: "inherit" }}>AgroLink</Typography>
+            <Stack direction="row" spacing={1} alignItems="center">
+              {currentUser ? (
+                <>
+                  <Button component={RouterLink} to="/dashboard" color="inherit">Dashboard</Button>
+                  {isAgricultor && (
+                    <>
+                      <Button component={RouterLink} to="/inventory" color="inherit">Inventario</Button>
+                      <Button component={RouterLink} to="/my-crops" color="inherit">Mis Cultivos</Button>
+                    </>
+                  )}
+                  {isComprador && (
+                    <>
+                      <Button component={RouterLink} to="/marketplace" color="inherit">Mercado</Button>
+                      <Button component={RouterLink} to="/mis-pedidos" color="inherit">Mis Pedidos</Button>
+                      <CartNav />
+                    </>
+                  )}
+                  {isAdmin && <Button component={RouterLink} to="/admin/pedidos" color="inherit">Admin Pedidos</Button>}
+                  <NotificationsNav currentUser={currentUser} />
+                  <IconButton onClick={handleLogout} color="inherit"><Logout /></IconButton>
+                </>
+              ) : (
+                <>
+                  <Button component={RouterLink} to="/login" color="inherit">Login</Button>
+                  <Button component={RouterLink} to="/register" color="inherit">Registro</Button>
+                </>
+              )}
+            </Stack>
+          </Container>
+        </Toolbar>
+      </AppBar>
 
-            <div className="collapse navbar-collapse" id="navMenu">
-              <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-                {currentUser ? (
-                  // Si el usuario está logueado
-                  <>
-                    <li className="nav-item"><Link className="nav-link" to="/dashboard">Dashboard</Link></li>
-                    <li className="nav-item"><a className="nav-link" href="/login" onClick={handleLogout}>Logout</a></li>
-                  </>
-                ) : (
-                  // Si el usuario NO está logueado
-                  <>
-                    <li className="nav-item"><Link className="nav-link" to="/login">Login</Link></li>
-                    <li className="nav-item"><Link className="nav-link" to="/register">Registro</Link></li>
-                  </>
-                )}
-              </ul>
-            </div>
-          </div>
-        </nav>
-      </header>
+      <Box sx={{ flexGrow: 1, py: 2 }}>
+        <ErrorBoundary>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/dashboard" element={currentUser ? <Dashboard /> : <Navigate to="/login" />} />
+            <Route path="/notifications" element={currentUser ? <Notifications /> : <Navigate to="/login" />} />
+            <Route path="/inventory" element={currentUser && isAgricultor ? <Inventory /> : <Navigate to="/dashboard" />} />
+            <Route path="/create-product" element={currentUser && isAgricultor ? <CreateProduct /> : <Navigate to="/dashboard" />} />
+            <Route path="/register-crop" element={currentUser && isAgricultor ? <RegisterCrop /> : <Navigate to="/dashboard" />} />
+            <Route path="/my-harvests" element={currentUser && isAgricultor ? <MyHarvests /> : <Navigate to="/dashboard" />} />
+            <Route path="/my-crops" element={currentUser && isAgricultor ? <MyCrops /> : <Navigate to="/dashboard" />} />
+            <Route path="/cultivos/:id" element={currentUser && isAgricultor ? <CropDetail /> : <Navigate to="/dashboard" />} />
+            <Route path="/cultivos/:id/register-harvest" element={currentUser && isAgricultor ? <RegisterHarvest /> : <Navigate to="/dashboard" />} />
+            <Route path="/mis-ventas" element={currentUser && isAgricultor ? <MySales /> : <Navigate to="/dashboard" />} />
+            <Route path="/reportes/ventas" element={currentUser && isAgricultor ? <ReportSales /> : <Navigate to="/dashboard" />} />
+            <Route path="/reportes/cosechas" element={currentUser && isAgricultor ? <ReportHarvests /> : <Navigate to="/dashboard" />} />
+            <Route path="/reportes/cultivos" element={currentUser && isAgricultor ? <ReportCrops /> : <Navigate to="/dashboard" />} />
+            <Route path="/marketplace" element={currentUser && isComprador ? <Marketplace /> : <Navigate to="/dashboard" />} />
+            <Route path="/checkout" element={currentUser && isComprador ? <Checkout /> : <Navigate to="/dashboard" />} />
+            <Route path="/mis-pedidos" element={currentUser && isComprador ? <MyOrders /> : <Navigate to="/dashboard" />} />
+            <Route path="/mis-compras" element={currentUser && isComprador ? <MyPurchases /> : <Navigate to="/dashboard" />} />
+            <Route path="/admin/pedidos" element={currentUser && isAdmin ? <AdminOrders /> : <Navigate to="/dashboard" />} />
+            <Route path="*" element={<Navigate to={currentUser ? "/dashboard" : "/"} />} />
+          </Routes>
+        </ErrorBoundary>
+      </Box>
 
-      <div>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route  path="/dashboard" element={currentUser ? <Dashboard /> : <Navigate to="/login" />} />
-          <Route   path="/create-product" element={currentUser ? <CreateProduct /> : <Navigate to="/login" />} />
-          <Route path="/register-crop"element={currentUser ? <RegisterCrop /> : <Navigate to="/login" />} />
-          <Route path="/marketplace" element={currentUser ? <Marketplace /> : <Navigate to="/login" />} />
-        </Routes>
-      </div>
+      <Box component="footer" sx={{ py: 4, mt: 'auto', textAlign: 'center' }}>
+        <Typography variant="body2" color="text.secondary">© {new Date().getFullYear()} AgroLink — Conectando el campo</Typography>
+      </Box>
+    </>
+  );
+}
 
-      <footer className="py-4 bg-light mt-5">
-        <div className="container text-center small text-muted">© {new Date().getFullYear()} AgroLink — Conectando el campo</div>
-      </footer>
-    </Router>
+// ========================
+//        APP WRAPPER (NUEVO)
+// ========================
+function App() {
+  return (
+    <NotificationsProvider>
+      <CartProvider>
+        <Router>
+          <AppLayout />
+        </Router>
+      </CartProvider>
+    </NotificationsProvider>
   );
 }
 

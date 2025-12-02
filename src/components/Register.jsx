@@ -1,21 +1,31 @@
-import React, { useState } from 'react';
-import authService from '../services/authService';
+import React, { useState } from "react";
+import authService from "../services/authService";
+import {
+  Container,
+  Paper,
+  Typography,
+  TextField,
+  MenuItem,
+  Button,
+  Alert,
+  Box,
+  Stack,
+} from "@mui/material";
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    lastname: '',
-    email: '',
-    password: '',
-    address: '',
-    phone: '',
-    userType: 'agricultor',
+    name: "",
+    lastname: "",
+    email: "",
+    password: "",
+    address: "",
+    phone: "",
+    userType: "agricultor",
   });
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('');
-  const [successful, setSuccessful] = useState(false);
 
-  const { name, lastname, email, password, address, phone, userType } = formData;
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [successful, setSuccessful] = useState(false);
 
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -23,13 +33,13 @@ const Register = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    setMessage('');
+    setMessage("");
     setSuccessful(false);
     setLoading(true);
 
     try {
       const response = await authService.register(formData);
-      setMessage(response.data || 'Registro correcto');
+      setMessage(response.data || "Registro exitoso");
       setSuccessful(true);
     } catch (error) {
       const resMessage =
@@ -44,77 +54,136 @@ const Register = () => {
   };
 
   return (
-    <div className="d-flex align-items-center justify-content-center min-vh-100 bg-light">
-      <div className="card shadow-sm rounded-4 register-card p-3" style={{maxWidth: '900px'}}>
-        <div className="row g-0">
-          <div className="col-md-6 p-4">
-            <h3 className="mb-3">Crea tu cuenta</h3>
-            <p className="small text-muted">Regístrate para comenzar a publicar y conectar.</p>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        backgroundImage: 'url("/images/fondo-agrolink.jpeg")',
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        p: 3,
+      }}
+    >
+      <Container
+        maxWidth="sm"
+        sx={{
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          py: 4,
+        }}
+      >
+        <Paper
+          elevation={6}
+          sx={{
+            p: 4,
+            width: "100%",
+            maxWidth: 520,
+            borderRadius: 3,
+            background: "rgba(255,255,255,0.85)",
+            backdropFilter: "blur(8px)",
+          }}
+        >
 
-            <form onSubmit={handleRegister}>
-              <div className="row">
-                <div className="col-md-6 mb-3">
-                  <label className="form-label">Nombre</label>
-                  <input className="form-control" type="text" name="name" value={name} onChange={onChange} required />
-                </div>
-                <div className="col-md-6 mb-3">
-                  <label className="form-label">Apellido</label>
-                  <input className="form-control" type="text" name="lastname" value={lastname} onChange={onChange} required />
-                </div>
-              </div>
+          {/* HEADER */}
+          <Box textAlign="center" sx={{ mb: 4 }}>
+            <Typography variant="h4" fontWeight={700}>
+              Crear cuenta
+            </Typography>
+            <Typography variant="body1" sx={{ opacity: 0.8 }}>
+              Únete a AgroLink y gestiona toda tu producción fácilmente 🌱
+            </Typography>
+          </Box>
 
-              <div className="mb-3">
-                <label className="form-label">Correo Electrónico</label>
-                <input className="form-control" type="email" name="email" value={email} onChange={onChange} required />
-              </div>
+          {/* FORMULARIO VERTICAL */}
+          <form onSubmit={handleRegister}>
+            <Stack spacing={2} sx={{ width: "75%", mx: "auto" }}>
+              <TextField
+                label="Nombre *"
+                name="name"
+                onChange={onChange}
+                required
+                fullWidth
+              />
 
-              <div className="mb-3">
-                <label className="form-label">Contraseña</label>
-                <input className="form-control" type="password" name="password" value={password} onChange={onChange} required />
-              </div>
+              <TextField
+                label="Apellido *"
+                name="lastname"
+                onChange={onChange}
+                required
+                fullWidth
+              />
 
-              <div className="mb-3">
-                <label className="form-label">Dirección</label>
-                <input className="form-control" type="text" name="address" value={address} onChange={onChange} />
-              </div>
+              <TextField
+                label="Correo Electrónico *"
+                name="email"
+                onChange={onChange}
+                required
+                fullWidth
+              />
 
-              <div className="mb-3">
-                <label className="form-label">Teléfono</label>
-                <input className="form-control" type="text" name="phone" value={phone} onChange={onChange} />
-              </div>
+              <TextField
+                label="Contraseña *"
+                type="password"
+                name="password"
+                onChange={onChange}
+                required
+                fullWidth
+              />
 
-              <div className="mb-3">
-                <label className="form-label">Tipo de Usuario</label>
-                <select className="form-select" name="userType" value={userType} onChange={onChange}>
-                  <option value="agricultor">Agricultor</option>
-                  <option value="comprador">Comprador</option>
-                </select>
-              </div>
+              <TextField
+                label="Dirección"
+                name="address"
+                onChange={onChange}
+                fullWidth
+              />
 
-              <div className="d-grid">
-                <button className="btn btn-success btn-lg" disabled={loading}>
-                  {loading ? 'Cargando...' : 'Registrarse'}
-                </button>
-              </div>
-            </form>
+              <TextField
+                label="Teléfono"
+                name="phone"
+                onChange={onChange}
+                fullWidth
+              />
 
-            {message && (
-              <div className={`alert mt-3 ${successful ? 'alert-success' : 'alert-danger'}`} role="alert">{message}</div>
-            )}
-          </div>
+              <TextField
+                select
+                label="Tipo de Usuario"
+                name="userType"
+                value={formData.userType}
+                onChange={onChange}
+                fullWidth
+              >
+                <MenuItem value="agricultor">Agricultor</MenuItem>
+                <MenuItem value="comprador">Comprador</MenuItem>
+              </TextField>
 
-          <div className="col-md-6 d-none d-md-flex align-items-center justify-content-center card-right p-4 rounded-end-4">
-            <div className="text-center text-white">
-              <h4>Únete a la comunidad</h4>
-              <p className="small opacity-85">Publica productos, contacta compradores y gestiona tu producción desde un solo lugar.</p>
-              <div className="mt-3">
-                <button className="btn btn-outline-light">Ver beneficios</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+              <Box textAlign="center" sx={{ mt: 2 }}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="success"
+                  size="large"
+                  sx={{ width: "50%" }}
+                  disabled={loading}
+                >
+                  {loading ? "Cargando..." : "REGISTRARSE"}
+                </Button>
+              </Box>
+            </Stack>
+
+          </form>
+
+          {message && (
+            <Alert severity={successful ? "success" : "error"} sx={{ mt: 3 }}>
+              {message}
+            </Alert>
+          )}
+        </Paper>
+      </Container>
+    </Box>
   );
 };
 
