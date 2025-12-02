@@ -1,9 +1,11 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import dataService from '../services/dataService';
-import { Container, Grid, Card, CardContent, Typography, Button, Stack, Snackbar, Alert, Dialog, DialogTitle, DialogContent, DialogActions, TextField, MenuItem, IconButton } from '@mui/material';
-// router link not needed here
+import { Container, Grid, Card, CardContent, Typography, Button, Stack, Snackbar, Alert, Dialog, DialogTitle, DialogContent, DialogActions, TextField, MenuItem, IconButton, Box, Paper, Chip } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import GrassIcon from '@mui/icons-material/Grass';
+import ScaleIcon from '@mui/icons-material/Scale';
+import StarIcon from '@mui/icons-material/Star';
 
 const normalizeHarvests = (res) => {
   if (!res || !res.data) return [];
@@ -171,38 +173,112 @@ const MyHarvests = () => {
   };
 
   return (
-    <Container sx={{ py: 4 }}>
-      <Typography variant="h5" gutterBottom>Mis Cosechas</Typography>
+    <Box sx={{ 
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
+      py: 4
+    }}>
+      <Container maxWidth="lg">
+        <Paper elevation={3} sx={{ p: 4, mb: 4, borderRadius: 3, background: 'rgba(255,255,255,0.95)' }}>
+          <Typography variant="h3" gutterBottom sx={{ 
+            fontWeight: 'bold',
+            background: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            mb: 2,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 2
+          }}>
+            <GrassIcon sx={{ fontSize: 40, color: '#11998e' }} />
+            Mis Cosechas
+          </Typography>
+        </Paper>
 
-      {loading ? (
-        <Typography>Cargando...</Typography>
-      ) : harvests.length === 0 ? (
-        <Typography>No hay cosechas registradas.</Typography>
-      ) : (
-        <Grid container spacing={2}>
-          {harvests.map(h => (
-            <Grid item xs={12} md={6} key={h.id || Math.random()}>
-              <Card>
-                <CardContent>
-                  <Stack spacing={1}>
-                    <Typography variant="h6">Cosecha #{h.id || '—'}</Typography>
-                    <Typography variant="body2">Cultivo: {h.cropName && h.cropName !== '' ? h.cropName : (h.cropId || '—')}</Typography>
-                    <Typography variant="body2">Cantidad: {h.quantity}</Typography>
-                    <Typography variant="body2">Calidad: {h.quality || '-'}</Typography>
-                    <Typography variant="body2">Fecha: {h.harvestDate ? h.harvestDate.split?.('T')?.[0] || h.harvestDate : '-'}</Typography>
-                    <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
-                      <IconButton size="small" onClick={() => handleOpenEdit(h)} aria-label="editar"><EditIcon fontSize="small"/></IconButton>
-                      <IconButton size="small" color="error" onClick={() => handleDelete(h)} aria-label="eliminar"><DeleteIcon fontSize="small"/></IconButton>
+        {loading ? (
+          <Paper elevation={2} sx={{ p: 4, textAlign: 'center', borderRadius: 3, background: 'rgba(255,255,255,0.95)' }}>
+            <Typography>Cargando...</Typography>
+          </Paper>
+        ) : harvests.length === 0 ? (
+          <Paper elevation={2} sx={{ p: 4, textAlign: 'center', borderRadius: 3, background: 'rgba(255,255,255,0.95)' }}>
+            <Typography>No hay cosechas registradas.</Typography>
+          </Paper>
+        ) : (
+          <Grid container spacing={3}>
+            {harvests.map((h, idx) => (
+              <Grid item xs={12} sm={6} md={4} key={h.id || Math.random()}>
+                <Card sx={{ 
+                  height: '100%',
+                  borderRadius: 3,
+                  transition: 'transform 0.3s, box-shadow 0.3s',
+                  '&:hover': {
+                    transform: 'translateY(-8px)',
+                    boxShadow: '0 12px 24px rgba(17, 153, 142, 0.3)'
+                  },
+                  background: 'rgba(255,255,255,0.95)'
+                }}>
+                  <CardContent>
+                    <Stack spacing={2}>
+                      <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#11998e' }}>
+                        Cosecha #{idx + 1}
+                      </Typography>
+                      
+                      <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                        🌾 {h.cropName && h.cropName !== '' ? h.cropName : (h.cropId || '—')}
+                      </Typography>
+
+                      <Box>
+                        <Chip 
+                          icon={<ScaleIcon />}
+                          label={`${h.quantity} unidades`}
+                          color="primary"
+                          size="small"
+                          sx={{ mr: 1, mb: 1 }}
+                        />
+                        <Chip 
+                          icon={<StarIcon />}
+                          label={h.quality || 'Sin definir'}
+                          color={h.quality === 'ALTA' ? 'success' : h.quality === 'MEDIA' ? 'warning' : 'default'}
+                          size="small"
+                          sx={{ mb: 1 }}
+                        />
+                      </Box>
+
+                      <Typography variant="body2" color="text.secondary">
+                        📅 {h.harvestDate ? h.harvestDate.split?.('T')?.[0] || h.harvestDate : '-'}
+                      </Typography>
+
+                      <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
+                        <IconButton 
+                          size="small" 
+                          onClick={() => handleOpenEdit(h)} 
+                          aria-label="editar"
+                          sx={{ 
+                            color: '#11998e',
+                            '&:hover': { background: 'rgba(17, 153, 142, 0.1)' }
+                          }}
+                        >
+                          <EditIcon fontSize="small"/>
+                        </IconButton>
+                        <IconButton 
+                          size="small" 
+                          color="error" 
+                          onClick={() => handleDelete(h)} 
+                          aria-label="eliminar"
+                          sx={{ '&:hover': { background: 'rgba(244, 67, 54, 0.1)' } }}
+                        >
+                          <DeleteIcon fontSize="small"/>
+                        </IconButton>
+                      </Stack>
                     </Stack>
-                  </Stack>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      )}
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        )}
 
-      <Dialog open={editOpen} onClose={handleCloseEdit} fullWidth>
+        <Dialog open={editOpen} onClose={handleCloseEdit} fullWidth>
         <DialogTitle>Editar Cosecha</DialogTitle>
         <DialogContent>
           {editing && (
@@ -222,12 +298,13 @@ const MyHarvests = () => {
           <Button onClick={handleCloseEdit}>Cancelar</Button>
           <Button variant="contained" onClick={handleSaveEdit}>Guardar</Button>
         </DialogActions>
-      </Dialog>
+        </Dialog>
 
-      <Snackbar open={!!message} autoHideDuration={4000} onClose={() => setMessage(null)}>
-        {message && <Alert severity={message.type} onClose={() => setMessage(null)}>{message.text}</Alert>}
-      </Snackbar>
-    </Container>
+        <Snackbar open={!!message} autoHideDuration={4000} onClose={() => setMessage(null)}>
+          {message && <Alert severity={message.type} onClose={() => setMessage(null)}>{message.text}</Alert>}
+        </Snackbar>
+      </Container>
+    </Box>
   );
 };
 

@@ -14,7 +14,20 @@ import MyCrops from './components/MyCrops.jsx';
 import { Navigate } from 'react-router-dom';
 import authService from './services/authService';
 import './App.css';
-import { AppBar, Toolbar, Typography, Button, Container, Grid, Card, CardContent, TextField, Box } from '@mui/material';
+import { AppBar, Toolbar, Typography, Button, Container, Grid, Card, CardContent, TextField, Box, Stack, InputAdornment, Divider, Menu, MenuItem, Badge, IconButton, Tooltip } from '@mui/material';
+import { ShoppingBasket, Handshake, BarChart, LocalShipping, Chat, Search as SearchIcon, TrendingUp, PeopleAlt, ReceiptLong, ArrowDropDown, ChatBubbleOutline, Logout, Inventory2, ShoppingCart } from '@mui/icons-material';
+import { CartProvider, useCart } from './context/CartContext';
+import { NotificationsProvider, useNotifications } from './context/NotificationsContext';
+import Checkout from './components/Checkout.jsx';
+import Notifications from './components/Notifications.jsx';
+import AdminOrders from './components/AdminOrders.jsx';
+import MySales from './components/MySales.jsx';
+import ReportSales from './components/ReportSales.jsx';
+import ReportHarvests from './components/ReportHarvests.jsx';
+import ReportCrops from './components/ReportCrops.jsx';
+import MyOrders from './components/MyOrders.jsx';
+import MyPurchases from './components/MyPurchases.jsx';
+import ErrorBoundary from './components/common/ErrorBoundary.jsx';
 
 
 const Home = () => {
@@ -24,11 +37,11 @@ const Home = () => {
   const [testimonialIndex, setTestimonialIndex] = React.useState(0);
 
   const features = [
-    { id: 1, icon: '🌱', title: 'Publica tus productos', text: 'Sube tus cosechas y alcanza compradores locales con facilidad.' },
-    { id: 2, icon: '🤝', title: 'Conecta y negocia', text: 'Comunícate directamente con compradores y gestiona acuerdos.' },
-    { id: 3, icon: '📈', title: 'Analiza tu producción', text: 'Paneles sencillos para monitorear tus rendimientos y ventas.' },
-    { id: 4, icon: '🚚', title: 'Logística', text: 'Conecta con opciones de entrega y transporte local.' },
-    { id: 5, icon: '💬', title: 'Mensajería', text: 'Comunícate en tiempo real con compradores y vendedores.' },
+    { id: 1, icon: <ShoppingBasket fontSize="large" color="primary" />, title: 'Publica tus productos', text: 'Sube tus cosechas y alcanza compradores locales con facilidad.' },
+    { id: 2, icon: <Handshake fontSize="large" color="primary" />, title: 'Conecta y negocia', text: 'Comunícate directamente con compradores y gestiona acuerdos.' },
+    { id: 3, icon: <BarChart fontSize="large" color="primary" />, title: 'Analiza tu producción', text: 'Paneles para monitorear rendimientos y ventas.' },
+    { id: 4, icon: <LocalShipping fontSize="large" color="primary" />, title: 'Logística', text: 'Opciones de entrega y transporte local.' },
+    { id: 5, icon: <Chat fontSize="large" color="primary" />, title: 'Mensajería', text: 'Comunícate en tiempo real con compradores y vendedores.' },
   ];
 
   const testimonials = [
@@ -37,10 +50,9 @@ const Home = () => {
     { name: 'Lucía R.', text: 'Excelente plataforma para gestionar mis cosechas.' },
   ];
 
-  // Animated counters (simulación)
   React.useEffect(() => {
     const targets = { products: 124, farmers: 32, orders: 540 };
-    const duration = 900; // ms
+    const duration = 900;
     const start = Date.now();
     const tick = () => {
       const elapsed = Date.now() - start;
@@ -55,7 +67,6 @@ const Home = () => {
     tick();
   }, []);
 
-  // Rotate testimonials
   React.useEffect(() => {
     const id = setInterval(() => {
       setTestimonialIndex((i) => (i + 1) % testimonials.length);
@@ -67,102 +78,247 @@ const Home = () => {
 
   return (
     <main>
-      <section>
-        <Container sx={{ py: 5 }}>
-          <Grid container alignItems="center">
-            <Grid item xs={12} md={6}>
-              <Typography variant="h3" component="h1" gutterBottom>Bienvenido a AgroLink</Typography>
-              <Typography variant="body1" color="text.secondary">Conecta con agricultores y compradores, gestiona cultivos y encuentra los mejores productos locales.</Typography>
-              <Box sx={{ display: 'flex', gap: 2, mt: 3 }}>
-                <Button component={Link} to="/register" variant="contained">Comenzar</Button>
-                <Button component={Link} to="/login" variant="outlined">Ingresar</Button>
-              </Box>
-
-              <Box sx={{ mt: 4, display: 'flex', gap: 3 }}>
-                <Box>
-                  <Typography variant="h5">{stats.products}</Typography>
-                  <Typography variant="caption" color="text.secondary">Productos</Typography>
-                </Box>
-                <Box>
-                  <Typography variant="h5">{stats.farmers}</Typography>
-                  <Typography variant="caption" color="text.secondary">Agricultores</Typography>
-                </Box>
-                <Box>
-                  <Typography variant="h5">{stats.orders}</Typography>
-                  <Typography variant="caption" color="text.secondary">Pedidos</Typography>
-                </Box>
-              </Box>
+      {/* Hero */}
+      <Box component="section" sx={{
+        py: { xs: 8, md: 10 },
+        background: 'linear-gradient(135deg, #4caf50 0%, #7cb342 40%, #cddc39 100%)',
+        color: 'common.white',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 2 }}>
+          <Grid container spacing={6} alignItems="center">
+            <Grid item xs={12} md={7}>
+              <Typography variant="overline" sx={{ opacity: 0.9 }}>Plataforma agrícola</Typography>
+              <Typography variant="h3" component="h1" fontWeight={700} gutterBottom>
+                Conecta. Gestiona. Crece.
+              </Typography>
+              <Typography variant="h6" sx={{ mb: 4, maxWidth: 520, opacity: 0.9 }}>
+                AgroLink facilita el comercio agrícola y la gestión de cultivos con herramientas modernas y simples.
+              </Typography>
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                <Button component={Link} to="/register" size="large" variant="contained" color="primary">Comenzar</Button>
+                <Button component={Link} to="/login" size="large" variant="outlined" color="inherit">Ingresar</Button>
+              </Stack>
+              <Stack direction="row" spacing={4} sx={{ mt: 6, flexWrap: 'wrap' }}>
+                <Stack alignItems="flex-start">
+                  <Typography variant="h4" fontWeight={700}>{stats.products}</Typography>
+                  <Typography variant="body2" sx={{ opacity: 0.85 }}><TrendingUp fontSize="inherit" sx={{ mr: 0.5 }} />Productos</Typography>
+                </Stack>
+                <Stack alignItems="flex-start">
+                  <Typography variant="h4" fontWeight={700}>{stats.farmers}</Typography>
+                  <Typography variant="body2" sx={{ opacity: 0.85 }}><PeopleAlt fontSize="inherit" sx={{ mr: 0.5 }} />Agricultores</Typography>
+                </Stack>
+                <Stack alignItems="flex-start">
+                  <Typography variant="h4" fontWeight={700}>{stats.orders}</Typography>
+                  <Typography variant="body2" sx={{ opacity: 0.85 }}><ReceiptLong fontSize="inherit" sx={{ mr: 0.5 }} />Pedidos</Typography>
+                </Stack>
+              </Stack>
             </Grid>
-            <Grid item xs={12} md={6} sx={{ display: { xs: 'none', md: 'block' } }}>
-              <Box sx={{ p: 2 }}>
-                <svg width="100%" height="320" viewBox="0 0 600 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Agriculture illustration">
-                  <rect width="100%" height="100%" rx="12" fill="#f8f9fa" />
-                  <g transform="translate(40,40)" fill="#0d6efd">
-                    <circle cx="60" cy="80" r="30" opacity="0.12" />
-                    <rect x="140" y="40" width="160" height="140" rx="12" opacity="0.06" />
-                  </g>
-                </svg>
-              </Box>
+            <Grid item xs={12} md={5}>
+              <Card elevation={6} sx={{
+                backdropFilter: 'blur(6px)',
+                background: 'rgba(255,255,255,0.2)',
+                border: '1px solid rgba(255,255,255,0.3)',
+                color: 'common.white'
+              }}>
+                <CardContent>
+                  <Typography variant="h6" gutterBottom>¿Por qué AgroLink?</Typography>
+                  <Typography variant="body2" sx={{ mb: 2, opacity: 0.9 }}>
+                    Simplificamos la cadena agrícola desde la producción hasta la venta directa.
+                  </Typography>
+                  <Divider sx={{ borderColor: 'rgba(255,255,255,0.3)', my: 2 }} />
+                  <Stack spacing={1}>
+                    <Typography variant="body2">✔ Publicación sin complicaciones</Typography>
+                    <Typography variant="body2">✔ Métricas en tiempo real</Typography>
+                    <Typography variant="body2">✔ Comunicación directa</Typography>
+                    <Typography variant="body2">✔ Apoyo a productores locales</Typography>
+                  </Stack>
+                </CardContent>
+              </Card>
             </Grid>
           </Grid>
         </Container>
-      </section>
+        <Box sx={{
+          position: 'absolute',
+          inset: 0,
+          background: 'radial-gradient(circle at 20% 30%, rgba(255,255,255,0.25) 0%, transparent 60%)'
+        }} />
+      </Box>
 
-      <section>
-        <Container sx={{ py: 5 }}>
-          <Grid container alignItems="center" spacing={3}>
-            <Grid item xs={12} md={8}>
-              <Typography variant="h4" gutterBottom>Lo que ofrecemos</Typography>
-              <Typography variant="body2" color="text.secondary">Herramientas pensadas para facilitar el comercio y la gestión agrícola.</Typography>
+      {/* Features & Content */}
+      <Box component="section" sx={{ py: { xs: 8, md: 10 }, bgcolor: 'background.default' }}>
+        <Container maxWidth="lg">
+          <Grid container alignItems="center" spacing={4} sx={{ mb: 2 }}>
+            <Grid item xs={12} md={7}>
+              <Typography variant="h4" fontWeight={700} gutterBottom>Lo que ofrecemos</Typography>
+              <Typography variant="body1" color="text.secondary">Herramientas pensadas para facilitar el comercio y la gestión agrícola.</Typography>
             </Grid>
-            <Grid item xs={12} md={4}>
-              <TextField fullWidth placeholder="Buscar funciones..." value={search} onChange={(e) => setSearch(e.target.value)} />
+            <Grid item xs={12} md={5}>
+              <TextField fullWidth placeholder="Buscar funciones..." value={search} onChange={(e) => setSearch(e.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start"><SearchIcon /></InputAdornment>
+                  )
+                }}
+              />
             </Grid>
+          </Grid>
 
+          <Grid container spacing={4}>
             {filtered.map(f => (
-              <Grid item xs={12} md={4} key={f.id}>
-                <Card>
+              <Grid item xs={12} sm={6} md={4} key={f.id}>
+                <Card elevation={3} sx={{
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  p: 1,
+                  transition: 'transform .3s, box-shadow .3s',
+                  '&:hover': { transform: 'translateY(-6px)', boxShadow: 6 }
+                }}>
                   <CardContent sx={{ textAlign: 'center' }}>
-                    <Box sx={{ fontSize: 28, mb: 1 }}>{f.icon}</Box>
-                    <Typography variant="h6">{f.title}</Typography>
-                    <Typography variant="body2" color="text.secondary">{f.text}</Typography>
+                    <Box sx={{ mb: 1 }}>{f.icon}</Box>
+                    <Typography variant="h6" fontWeight={600}>{f.title}</Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>{f.text}</Typography>
                   </CardContent>
                 </Card>
               </Grid>
             ))}
+          </Grid>
 
+          <Grid container spacing={6} sx={{ mt: 2 }}>
             <Grid item xs={12} md={6}>
-              <Typography variant="h6">Testimonios</Typography>
-              <Card sx={{ p: 2 }}>
+              <Typography variant="h6" gutterBottom>Testimonios</Typography>
+              <Card sx={{
+                p: 2,
+                background: 'linear-gradient(135deg, #e8f5e9, #f1f8e9)',
+                border: '1px solid',
+                borderColor: 'success.light'
+              }}>
                 <CardContent>
-                  <Typography>"{testimonials[testimonialIndex].text}"</Typography>
+                  <Typography variant="subtitle1" sx={{ mb: 1 }}>"{testimonials[testimonialIndex].text}"</Typography>
                   <Typography variant="caption" color="text.secondary">— {testimonials[testimonialIndex].name}</Typography>
                 </CardContent>
               </Card>
             </Grid>
-
             <Grid item xs={12} md={6}>
-              <Typography variant="h6">Suscríbete a novedades</Typography>
+              <Typography variant="h6" gutterBottom>Suscríbete a novedades</Typography>
               {!subscribed ? (
                 <Box component="form" onSubmit={(e) => { e.preventDefault(); setSubscribed(true); }} sx={{ display: 'flex', gap: 2 }}>
                   <TextField type="email" required placeholder="tu@correo.com" fullWidth />
                   <Button variant="contained">Suscribir</Button>
                 </Box>
               ) : (
-                <Card>
+                <Card elevation={0} sx={{ background: 'linear-gradient(90deg,#c8e6c9,#dcedc8)' }}>
                   <CardContent>
-                    <Typography color="success.main">Gracias por suscribirte. Te avisaremos novedades.</Typography>
+                    <Typography color="success.main" fontWeight={600}>Gracias por suscribirte. Te avisaremos novedades.</Typography>
                   </CardContent>
                 </Card>
               )}
             </Grid>
           </Grid>
         </Container>
-      </section>
+      </Box>
     </main>
   );
 };
 
+
+const CartNav = () => {
+  const { count } = useCart() || { count: 0 };
+  return (
+    <IconButton component={Link} to="/checkout" aria-label={`Carrito${count ? ' ' + count : ''}`} color="primary">
+      <Badge badgeContent={count} color="error" overlap="circular">
+        <ShoppingCart />
+      </Badge>
+    </IconButton>
+  );
+};
+
+const NotificationsNav = ({ currentUser }) => {
+  const { getUnreadCount } = useNotifications() || {};
+  const unread = currentUser?.email && getUnreadCount ? getUnreadCount(currentUser.email) : 0;
+  if (!currentUser?.roles?.includes('ROLE_AGRICULTOR')) return null;
+  return (
+    <IconButton
+      component={Link}
+      to="/notificaciones"
+      aria-label={`Notificaciones${unread ? ' ' + unread : ''}`}
+      color="primary"
+      sx={{ ml: 1 }}
+    >
+      {unread > 0 ? (
+        <Badge badgeContent={unread} color="error" overlap="circular">
+          <ChatBubbleOutline />
+        </Badge>
+      ) : (
+        <ChatBubbleOutline />
+      )}
+    </IconButton>
+  );
+};
+
+// Menús para ROLE_AGRICULTOR
+const AgricultorMenus = () => {
+  const [anchorProducto, setAnchorProducto] = React.useState(null);
+  const [anchorReportes, setAnchorReportes] = React.useState(null);
+
+  const openProducto = Boolean(anchorProducto);
+  const openReportes = Boolean(anchorReportes);
+
+  const handleOpen = (setter) => (e) => setter(e.currentTarget);
+  const handleClose = (setter) => () => setter(null);
+
+  return (
+    <Stack direction="row" spacing={1} sx={{ display: 'inline-flex' }}>
+      {/* Producto */}
+      <>
+        <Button
+          id="btn-producto"
+          aria-controls={openProducto ? 'menu-producto' : undefined}
+          aria-haspopup="true"
+          aria-expanded={openProducto ? 'true' : undefined}
+          onClick={handleOpen(setAnchorProducto)}
+          endIcon={<ArrowDropDown />}
+        >Producto</Button>
+        <Menu
+          id="menu-producto"
+          anchorEl={anchorProducto}
+          open={openProducto}
+          onClose={handleClose(setAnchorProducto)}
+          MenuListProps={{ 'aria-labelledby': 'btn-producto' }}
+        >
+          <MenuItem component={Link} to="/my-harvests" onClick={handleClose(setAnchorProducto)}>Mis Cosechas</MenuItem>
+          <MenuItem component={Link} to="/my-crops" onClick={handleClose(setAnchorProducto)}>Mis Cultivos</MenuItem>
+          <MenuItem component={Link} to="/mis-ventas" onClick={handleClose(setAnchorProducto)}>Mis Ventas</MenuItem>
+        </Menu>
+      </>
+      {/* Reportes */}
+      <>
+        <Button
+          id="btn-reportes"
+          aria-controls={openReportes ? 'menu-reportes' : undefined}
+          aria-haspopup="true"
+          aria-expanded={openReportes ? 'true' : undefined}
+          onClick={handleOpen(setAnchorReportes)}
+          endIcon={<ArrowDropDown />}
+        >Reportes</Button>
+        <Menu
+          id="menu-reportes"
+          anchorEl={anchorReportes}
+          open={openReportes}
+          onClose={handleClose(setAnchorReportes)}
+          MenuListProps={{ 'aria-labelledby': 'btn-reportes' }}
+        >
+          <MenuItem component={Link} to="/reportes/ventas" onClick={handleClose(setAnchorReportes)}>Rep. Ventas</MenuItem>
+          <MenuItem component={Link} to="/reportes/cosechas" onClick={handleClose(setAnchorReportes)}>Rep. Cosechas</MenuItem>
+          <MenuItem component={Link} to="/reportes/cultivos" onClick={handleClose(setAnchorReportes)}>Rep. Cultivos</MenuItem>
+        </Menu>
+      </>
+    </Stack>
+  );
+};
 
 function App() {
   const [currentUser, setCurrentUser] = React.useState(authService.getCurrentUser());
@@ -173,59 +329,94 @@ function App() {
     // No necesitas redirigir aquí, el router lo hará
   };
   return (
+    <NotificationsProvider>
+    <CartProvider>
     <Router>
-      <AppBar position="static" color="default" elevation={1}>
-        <Toolbar>
-          <Container sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Typography component={Link} to={currentUser ? '/dashboard' : '/'} variant="h6" sx={{ textDecoration: 'none', color: 'inherit' }}>AgroLink</Typography>
+      <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+        <AppBar position="static" color="default" elevation={1}>
+          <Toolbar>
+            <Container sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Typography component={Link} to={currentUser ? '/dashboard' : '/'} variant="h6" sx={{ textDecoration: 'none', color: 'inherit' }}>AgroLink</Typography>
 
-            <div>
-              {currentUser ? (
-                <>
-                  <Button component={Link} to="/dashboard">Dashboard</Button>
-                  {currentUser.roles.includes('ROLE_AGRICULTOR') && (
-                    <>
-                      <Button component={Link} to="/inventory">Inventario</Button>
-                      <Button component={Link} to="/my-harvests">Mis Cosechas</Button>
-                      <Button component={Link} to="/my-crops">Mis Cultivos</Button>
-                    </>
-                  )}
-                  <Button href="/login" onClick={handleLogout}>Logout</Button>
-                </>
-              ) : (
-                <>
-                  <Button component={Link} to="/login">Login</Button>
-                  <Button component={Link} to="/register">Registro</Button>
-                </>
-              )}
-            </div>
+              <div>
+                {currentUser ? (
+                  <>
+                    {!currentUser.roles.includes('ROLE_AGRICULTOR') && !currentUser.roles.includes('ROLE_COMPRADOR') && (
+                      <Button component={Link} to="/dashboard">Dashboard</Button>
+                    )}
+                    {currentUser.roles.includes('ROLE_AGRICULTOR') && (
+                      <>
+                        {/* Ícono Inventario para Agricultor */}
+                        <Tooltip title="Inventario">
+                          <IconButton component={Link} to="/inventory" aria-label="Inventario" color="primary">
+                            <Inventory2 />
+                          </IconButton>
+                        </Tooltip>
+                        <NotificationsNav currentUser={currentUser} />
+                      </>
+                    )}
+                    {currentUser.roles.includes('ROLE_ADMINISTRADOR') && (
+                      <Button component={Link} to="/admin/pedidos">Pedidos</Button>
+                    )}
+                    {currentUser.roles.includes('ROLE_COMPRADOR') && (
+                      <>
+                        <CartNav />
+                      </>
+                    )}
+                    <Tooltip title="Salir">
+                      <IconButton href="/login" onClick={handleLogout} aria-label="Salir" color="primary">
+                        <Logout />
+                      </IconButton>
+                    </Tooltip>
+                  </>
+                ) : (
+                  <>
+                    <Button component={Link} to="/login">Login</Button>
+                    <Button component={Link} to="/register">Registro</Button>
+                  </>
+                )}
+              </div>
+            </Container>
+          </Toolbar>
+        </AppBar>
+
+        <Box sx={{ flexGrow: 1 }}>
+          <ErrorBoundary>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/dashboard" element={currentUser ? <Dashboard /> : <Navigate to="/login" />} />
+              <Route path="/create-product" element={currentUser ? <CreateProduct /> : <Navigate to="/login" />} />
+              <Route path="/register-crop" element={currentUser ? <RegisterCrop /> : <Navigate to="/login" />} />
+              <Route path="/marketplace" element={currentUser ? <Marketplace /> : <Navigate to="/login" />} />
+              <Route path="/inventory" element={currentUser ? <Inventory /> : <Navigate to="/login" />} />
+              <Route path="/cultivos/:id" element={currentUser ? <CropDetail /> : <Navigate to="/login" />} />
+              <Route path="/cultivos/:id/register-harvest" element={currentUser ? <RegisterHarvest /> : <Navigate to="/login" />} />
+              <Route path="/my-harvests" element={currentUser ? <MyHarvests /> : <Navigate to="/login" />} />
+              <Route path="/my-crops" element={currentUser ? <MyCrops /> : <Navigate to="/login" />} />
+              <Route path="/checkout" element={currentUser ? <Checkout /> : <Navigate to="/login" />} />
+              <Route path="/notificaciones" element={currentUser ? <Notifications /> : <Navigate to="/login" />} />
+              <Route path="/admin/pedidos" element={currentUser ? <AdminOrders /> : <Navigate to="/login" />} />
+              <Route path="/mis-ventas" element={currentUser ? <MySales /> : <Navigate to="/login" />} />
+              <Route path="/reportes/ventas" element={currentUser ? <ReportSales /> : <Navigate to="/login" />} />
+              <Route path="/reportes/cosechas" element={currentUser ? <ReportHarvests /> : <Navigate to="/login" />} />
+              <Route path="/reportes/cultivos" element={currentUser ? <ReportCrops /> : <Navigate to="/login" />} />
+              <Route path="/mis-pedidos" element={currentUser ? <MyOrders /> : <Navigate to="/login" />} />
+              <Route path="/mis-compras" element={currentUser ? <MyPurchases /> : <Navigate to="/login" />} />
+            </Routes>
+          </ErrorBoundary>
+        </Box>
+
+        <Box component="footer" sx={{ py: 4, mt: 'auto', bgcolor: 'background.paper' }}>
+          <Container sx={{ textAlign: 'center' }}>
+            <Typography variant="body2" color="text.secondary">© {new Date().getFullYear()} AgroLink — Conectando el campo</Typography>
           </Container>
-        </Toolbar>
-      </AppBar>
-
-      <div>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route  path="/dashboard" element={currentUser ? <Dashboard /> : <Navigate to="/login" />} />
-          <Route   path="/create-product" element={currentUser ? <CreateProduct /> : <Navigate to="/login" />} />
-          <Route path="/register-crop"element={currentUser ? <RegisterCrop /> : <Navigate to="/login" />} />
-          <Route path="/marketplace" element={currentUser ? <Marketplace /> : <Navigate to="/login" />} />
-          <Route path="/inventory" element={currentUser ? <Inventory /> : <Navigate to="/login" />} />
-          <Route path="/cultivos/:id" element={currentUser ? <CropDetail /> : <Navigate to="/login" />} />
-          <Route path="/cultivos/:id/register-harvest" element={currentUser ? <RegisterHarvest /> : <Navigate to="/login" />} />
-          <Route path="/my-harvests" element={currentUser ? <MyHarvests /> : <Navigate to="/login" />} />
-          <Route path="/my-crops" element={currentUser ? <MyCrops /> : <Navigate to="/login" />} />
-        </Routes>
-      </div>
-
-      <Box component="footer" sx={{ py: 4, mt: 5, bgcolor: 'background.paper' }}>
-        <Container sx={{ textAlign: 'center' }}>
-          <Typography variant="body2" color="text.secondary">© {new Date().getFullYear()} AgroLink — Conectando el campo</Typography>
-        </Container>
+        </Box>
       </Box>
     </Router>
+    </CartProvider>
+    </NotificationsProvider>
   );
 }
 

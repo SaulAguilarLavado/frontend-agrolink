@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import dataService from '../services/dataService';
-import { Container, Card, CardContent, Typography, TextField, Button, Grid, Snackbar, Alert, MenuItem } from '@mui/material';
+import { Container, Card, CardContent, Typography, TextField, Button, Grid, Snackbar, Alert, MenuItem, Box, Paper } from '@mui/material';
+import AgricultureIcon from '@mui/icons-material/Agriculture';
 
 const RegisterHarvest = () => {
   const { id } = useParams(); // crop id
@@ -105,6 +106,14 @@ const RegisterHarvest = () => {
       } catch (e) {
         console.warn('Could not persist local harvest copy', e);
       }
+      // Cambiar estado del cultivo a COSECHADO (RF4) después del registro
+      try {
+        if (payload.cropId) {
+          await dataService.updateCropStatus(payload.cropId, 'Cosechado');
+        }
+      } catch (e) {
+        console.warn('No se pudo actualizar el estado del cultivo a COSECHADO', e);
+      }
 
       setMessage({ type: 'success', text: 'Cosecha registrada correctamente' });
       // opcional: redirigir al inventario
@@ -116,10 +125,13 @@ const RegisterHarvest = () => {
   };
 
   return (
-    <Container sx={{ py: 4 }}>
-      <Card>
-        <CardContent>
-          <Typography variant="h5" gutterBottom>Registrar Cosecha</Typography>
+    <Box sx={{ minHeight: '100vh', background: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)', py: 4 }}>
+      <Container maxWidth="sm">
+        <Paper elevation={3} sx={{ p: 4, borderRadius: 3, background: 'rgba(255,255,255,0.95)' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+            <AgricultureIcon sx={{ fontSize: 32, color: '#11998e', mr: 1 }} />
+            <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#11998e' }}>Registrar Cosecha</Typography>
+          </Box>
           <form onSubmit={handleSubmit}>
             <Grid container spacing={2}>
               <Grid item xs={12} md={6}>
@@ -164,17 +176,16 @@ const RegisterHarvest = () => {
               </Grid>
 
               <Grid item xs={12}>
-                <Button variant="contained" type="submit">Registrar Cosecha</Button>
+                <Button variant="contained" type="submit" fullWidth sx={{ background: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)', fontWeight: 'bold', py: 1.5 }}>Registrar Cosecha</Button>
               </Grid>
             </Grid>
           </form>
-        </CardContent>
-      </Card>
-
-      <Snackbar open={!!message} autoHideDuration={4000} onClose={() => setMessage(null)}>
-        {message && <Alert onClose={() => setMessage(null)} severity={message.type}>{message.text}</Alert>}
-      </Snackbar>
-    </Container>
+          <Snackbar open={!!message} autoHideDuration={4000} onClose={() => setMessage(null)}>
+            {message && <Alert onClose={() => setMessage(null)} severity={message.type}>{message.text}</Alert>}
+          </Snackbar>
+        </Paper>
+      </Container>
+    </Box>
   );
 };
 

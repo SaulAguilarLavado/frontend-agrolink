@@ -1,12 +1,30 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, Link as RouterLink, useNavigate } from 'react-router-dom';
 import dataService from '../services/dataService';
-import { Container, Card, CardContent, Typography, Button, Stack, TextField, MenuItem, Snackbar, Alert } from '@mui/material';
+import {
+  Container,
+  Card,
+  CardContent,
+  CardHeader,
+  Typography,
+  Button,
+  Stack,
+  Snackbar,
+  Alert,
+  Grid,
+  Avatar,
+  Divider,
+  Box,
+  Paper
+} from '@mui/material';
+import AgricultureIcon from '@mui/icons-material/Agriculture';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const statusOptions = [
   { value: 'Activo', label: 'Activo' },
   { value: 'Cosechado', label: 'Cosechado' },
 ];
+
 
 const CropDetail = () => {
   const { id } = useParams();
@@ -33,50 +51,67 @@ const CropDetail = () => {
     fetchCrop();
   }, [fetchCrop]);
 
-  const handleUpdateStatus = async () => {
-    try {
-      await dataService.updateCropStatus(id, status);
-      setMessage({ type: 'success', text: 'Estado actualizado' });
-      await fetchCrop();
-      if (status === 'Cosechado') {
-        navigate(`/cultivos/${id}/register-harvest`);
-      }
-    } catch (e) {
-      console.error(e);
-      setMessage({ type: 'error', text: 'Error al actualizar estado' });
-    }
-  };
 
-  if (loading) return <Container sx={{ py: 4 }}><Typography>Cargando...</Typography></Container>;
+  if (loading) return (
+    <Box sx={{ minHeight: '100vh', background: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)', py: 4 }}>
+      <Container maxWidth="sm">
+        <Paper elevation={3} sx={{ p: 4, borderRadius: 3, background: 'rgba(255,255,255,0.95)' }}>
+          <Typography variant="h6" color="text.secondary">Cargando...</Typography>
+        </Paper>
+      </Container>
+    </Box>
+  );
 
   return (
-    <Container sx={{ py: 4 }}>
-      <Card>
-        <CardContent>
-          <Typography variant="h5">Cultivo: {crop?.name || '—'}</Typography>
-          <Typography variant="body2" color="text.secondary">Estado actual: {crop?.status}</Typography>
-          <Typography variant="body2" color="text.secondary">Fecha siembra: {crop?.plantingDate?.split('T')?.[0] || '-'}</Typography>
-          
-          {String(crop?.status || '').toUpperCase() === 'COSECHADO' ? (
-            <Stack spacing={1} sx={{ mt: 3 }}>
-              <Typography variant="body1">Fecha de cosecha: {crop.harvestDate ? String(crop.harvestDate).split('T')[0] : 'No registrada'}</Typography>
-            </Stack>
-          ) : (
-            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mt: 3 }}>
-              <TextField select label="Nuevo estado" value={status} onChange={(e) => setStatus(e.target.value)} sx={{ minWidth: 200 }}>
-                {statusOptions.map(o => <MenuItem key={o.value} value={o.value}>{o.label}</MenuItem>)}
-              </TextField>
-              <Button variant="contained" onClick={handleUpdateStatus}>Actualizar estado</Button>
-              <Button component={RouterLink} to={`/cultivos/${id}/register-harvest`} variant="outlined">Registrar cosecha</Button>
-            </Stack>
-          )}
-        </CardContent>
-      </Card>
-
-      <Snackbar open={!!message} autoHideDuration={4000} onClose={() => setMessage(null)}>
-        {message && <Alert onClose={() => setMessage(null)} severity={message.type}>{message.text}</Alert>}
-      </Snackbar>
-    </Container>
+    <Box sx={{ minHeight: '100vh', background: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)', py: 4 }}>
+      <Container maxWidth="sm">
+        <Paper elevation={3} sx={{ p: 4, borderRadius: 3, background: 'rgba(255,255,255,0.95)' }}>
+          <Button
+            startIcon={<ArrowBackIcon />}
+            variant="text"
+            sx={{ mb: 2, color: '#11998e', fontWeight: 'bold' }}
+            onClick={() => navigate(-1)}
+          >
+            Volver
+          </Button>
+          <Card sx={{ boxShadow: 4, borderRadius: 3, background: 'rgba(255,255,255,0.95)' }}>
+            <CardHeader
+              avatar={<Avatar sx={{ bgcolor: 'success.main' }}><AgricultureIcon /></Avatar>}
+              title={<Typography variant="h5" sx={{ fontWeight: 'bold', color: '#11998e' }}>{crop?.name || '—'}</Typography>}
+              subheader={<Typography variant="subtitle1" sx={{ color: '#38ef7d', fontWeight: 'bold' }}>{`Estado: ${crop?.status}`}</Typography>}
+            />
+            <Divider />
+            <CardContent>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="body2" color="text.secondary">Fecha de siembra:</Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>{crop?.plantingDate?.split('T')?.[0] || '-'}</Typography>
+                  <Typography variant="body2" color="text.secondary">Extensión del terreno:</Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>{crop?.area || '—'} ha</Typography>
+                  <Typography variant="body2" color="text.secondary">Cuidados:</Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>{crop?.care || '—'}</Typography>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  {String(crop?.status || '').toUpperCase() === 'COSECHADO' ? (
+                    <Stack spacing={1}>
+                      <Typography variant="body2" color="text.secondary">Fecha de cosecha:</Typography>
+                      <Typography variant="body1">{crop.harvestDate ? String(crop.harvestDate).split('T')[0] : 'No registrada'}</Typography>
+                    </Stack>
+                  ) : (
+                    <Stack spacing={2}>
+                      <Button component={RouterLink} to={`/cultivos/${id}/register-harvest`} variant="contained" sx={{ background: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)', fontWeight: 'bold' }}>Registrar cosecha</Button>
+                    </Stack>
+                  )}
+                </Grid>
+              </Grid>
+            </CardContent>
+          </Card>
+          <Snackbar open={!!message} autoHideDuration={4000} onClose={() => setMessage(null)}>
+            {message && <Alert onClose={() => setMessage(null)} severity={message.type}>{message.text}</Alert>}
+          </Snackbar>
+        </Paper>
+      </Container>
+    </Box>
   );
 };
 

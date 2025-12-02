@@ -23,6 +23,19 @@ const getAllProducts = () => {
   // Hacemos un GET a /productos, enviando el encabezado de autorización
   return axios.get(API_URL + 'productos', { headers: getAuthHeader() });
 };
+// Filtro de productos (RF8)
+const filterProducts = (params = {}) => {
+  const { nombre, tipoCultivo, unidad, maxPrecio, minCantidad } = params;
+  const q = new URLSearchParams();
+  // En el backend actual, "tipo de cultivo" se aproxima a nombre del producto
+  const nameToUse = nombre || tipoCultivo || '';
+  if (nameToUse) q.append('nombre', nameToUse);
+  if (unidad) q.append('unidad', unidad);
+  if (typeof maxPrecio === 'number' && !Number.isNaN(maxPrecio)) q.append('maxPrecio', String(maxPrecio));
+  if (typeof minCantidad === 'number' && !Number.isNaN(minCantidad)) q.append('minCantidad', String(minCantidad));
+  const url = API_URL + 'productos/filtrar' + (q.toString() ? `?${q.toString()}` : '');
+  return axios.get(url, { headers: getAuthHeader() });
+};
 // ------------------------------------------
 
 // (Función registerCrop que ya tenías)
@@ -143,11 +156,43 @@ const deleteProduct = (productId) => {
   return axios.delete(API_URL + `productos/${productId}`, { headers: getAuthHeader() });
 };
 
+// --- PEDIDOS (RF9) ---
+// Crear pedido: body { items: [{ productId, quantity }] }
+const createOrder = (items) => {
+  const payload = { items };
+  return axios.post(API_URL + 'pedidos', payload, { headers: getAuthHeader() });
+};
+
+// Historial de pedidos del comprador (RF14)
+const getMyOrders = () => axios.get(API_URL + 'pedidos/my-orders', { headers: getAuthHeader() });
+
+// --- ADMIN: Pedidos (RF11) ---
+// Obtener todos los pedidos (solo ADMINISTRADOR)
+const getAllOrdersAdmin = () => {
+  return axios.get(API_URL + 'pedidos', { headers: getAuthHeader() });
+};
+
+// Actualizar estado de pedido (PATCH /pedidos/{id}/estado) body: { status }
+const updateOrderStatus = (orderId, status) => {
+  return axios.patch(API_URL + `pedidos/${orderId}/estado`, { status }, { headers: getAuthHeader() });
+};
+
+// --- TRANSACCIONES (RF12) ---
+const getAllTransactions = () => axios.get(API_URL + 'transacciones', { headers: getAuthHeader() });
+const getMySales = () => axios.get(API_URL + 'transacciones/mis-ventas', { headers: getAuthHeader() });
+const getMyPurchases = () => axios.get(API_URL + 'transacciones/mis-compras', { headers: getAuthHeader() });
+
+// --- REPORTES (RF13) ---
+const getSalesReport = () => axios.get(API_URL + 'reports/sales', { headers: getAuthHeader() });
+const getHarvestReport = () => axios.get(API_URL + 'reports/harvests', { headers: getAuthHeader() });
+const getCropReport = () => axios.get(API_URL + 'reports/crops', { headers: getAuthHeader() });
+
 
 
 const dataService = {
   createProduct,
   getAllProducts, // <-- EXPORTAR LA NUEVA FUNCIÓN
+  filterProducts,
   registerCrop,
   // RF4 - RF6 helpers
   getCropById,
@@ -160,6 +205,16 @@ const dataService = {
   getMyCrops,
   adjustProductStock,
   deleteProduct,
+  createOrder,
+  getMyOrders,
+  getAllOrdersAdmin,
+  updateOrderStatus,
+  getAllTransactions,
+  getMySales,
+  getMyPurchases,
+  getSalesReport,
+  getHarvestReport,
+  getCropReport,
 };
 
 export default dataService;

@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import dataService from '../services/dataService';
-import { Container, Grid, Card, CardContent, Typography, Button, Stack, Snackbar, Alert } from '@mui/material';
+import { Container, Grid, Card, CardContent, Typography, Button, Stack, Snackbar, Alert, Box, Paper, Chip } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import AgricultureIcon from '@mui/icons-material/Agriculture';
+import TimerIcon from '@mui/icons-material/Timer';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 const formatElapsed = (fromDate, now) => {
   if (!fromDate) return '-';
@@ -122,50 +125,134 @@ const MyCrops = () => {
   };
 
   return (
-    <Container sx={{ py: 4 }}>
-      <Typography variant="h5" gutterBottom>Mis Cultivos</Typography>
+    <Box sx={{ 
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      py: 4
+    }}>
+      <Container maxWidth="lg">
+        <Paper elevation={3} sx={{ p: 4, mb: 4, borderRadius: 3, background: 'rgba(255,255,255,0.95)' }}>
+          <Typography variant="h3" gutterBottom sx={{ 
+            fontWeight: 'bold',
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            mb: 2,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 2
+          }}>
+            <AgricultureIcon sx={{ fontSize: 40, color: '#764ba2' }} />
+            Mis Cultivos
+          </Typography>
+        </Paper>
 
-      {loading ? (
-        <Typography>Cargando...</Typography>
-      ) : crops.length === 0 ? (
-        <>
-          <Typography>No tienes cultivos registrados.</Typography>
-          <Typography variant="caption" color="text.secondary">Si deberías ver cultivos, verifica que tu token está activo o que el backend expone un endpoint para "mis cultivos".</Typography>
-          <Button sx={{ mt: 1 }} variant="outlined" onClick={fetch}>Reintentar</Button>
-        </>
-      ) : (
-        <Grid container spacing={2}>
-          {crops.map(c => (
-            <Grid item xs={12} md={6} key={c.id || Math.random()}>
-              <Card>
-                <CardContent>
-                  <Stack spacing={1}>
-                    <Typography variant="h6">{c.name}</Typography>
-                    <Typography variant="body2">Estado: {c.status}</Typography>
-                    <Typography variant="body2">Desde: {c.plantingDate ? new Date(c.plantingDate).toLocaleDateString() : '-'}</Typography>
-                    <Typography variant="body2">Tiempo transcurrido: {formatElapsed(c.plantingDate, frozenTimes[c.id] ? new Date(frozenTimes[c.id]) : now)}</Typography>
-                    <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
-                      {String(c.status || '').toUpperCase() !== 'COSECHADO' && (
-                        <Button variant="contained" color="success" onClick={() => handleHarvest(c)}>Cosechar</Button>
-                      )}
-                      {String(c.status || '').toUpperCase() !== 'COSECHADO' ? (
-                        <Button variant="outlined" onClick={() => navigate(`/cultivos/${c.id}`)}>Ver detalle</Button>
-                      ) : (
-                        <Button variant="outlined" onClick={() => { if (window.history.length > 1) navigate(-1); else navigate('/'); }}>Volver</Button>
-                      )}
+        {loading ? (
+          <Paper elevation={2} sx={{ p: 4, textAlign: 'center', borderRadius: 3, background: 'rgba(255,255,255,0.95)' }}>
+            <Typography>Cargando...</Typography>
+          </Paper>
+        ) : crops.length === 0 ? (
+          <Paper elevation={2} sx={{ p: 4, textAlign: 'center', borderRadius: 3, background: 'rgba(255,255,255,0.95)' }}>
+            <Typography variant="h6" gutterBottom>No tienes cultivos registrados.</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>Si deberías ver cultivos, verifica que tu token está activo o que el backend expone un endpoint para "mis cultivos".</Typography>
+            <Button variant="contained" onClick={fetch} sx={{
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              '&:hover': { background: 'linear-gradient(135deg, #5568d3 0%, #633a8a 100%)' }
+            }}>Reintentar</Button>
+          </Paper>
+        ) : (
+          <Grid container spacing={3}>
+            {crops.map(c => (
+              <Grid item xs={12} sm={6} md={4} key={c.id || Math.random()}>
+                <Card sx={{ 
+                  height: '100%',
+                  borderRadius: 3,
+                  transition: 'transform 0.3s, box-shadow 0.3s',
+                  '&:hover': {
+                    transform: 'translateY(-8px)',
+                    boxShadow: '0 12px 24px rgba(102, 126, 234, 0.3)'
+                  },
+                  background: 'rgba(255,255,255,0.95)'
+                }}>
+                  <CardContent>
+                    <Stack spacing={2}>
+                      <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#764ba2' }}>
+                        {c.name}
+                      </Typography>
+                      
+                      <Box>
+                        <Chip 
+                          icon={String(c.status || '').toUpperCase() === 'COSECHADO' ? <CheckCircleIcon /> : <AgricultureIcon />}
+                          label={c.status}
+                          color={String(c.status || '').toUpperCase() === 'COSECHADO' ? 'success' : 'primary'}
+                          sx={{ fontWeight: 'bold', mb: 1 }}
+                        />
+                      </Box>
+
+                      <Typography variant="body2" color="text.secondary">
+                        📅 Desde: {c.plantingDate ? new Date(c.plantingDate).toLocaleDateString() : '-'}
+                      </Typography>
+                      
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <TimerIcon color="action" />
+                        <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#667eea' }}>
+                          {formatElapsed(c.plantingDate, frozenTimes[c.id] ? new Date(frozenTimes[c.id]) : now)}
+                        </Typography>
+                      </Box>
+
+                      <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
+                        {String(c.status || '').toUpperCase() !== 'COSECHADO' && (
+                          <Button 
+                            variant="contained" 
+                            color="success" 
+                            fullWidth
+                            onClick={() => handleHarvest(c)}
+                            sx={{ fontWeight: 'bold' }}
+                          >
+                            Cosechar
+                          </Button>
+                        )}
+                        {String(c.status || '').toUpperCase() !== 'COSECHADO' ? (
+                          <Button 
+                            variant="outlined" 
+                            fullWidth
+                            onClick={() => navigate(`/cultivos/${c.id}`)}
+                            sx={{
+                              borderColor: '#667eea',
+                              color: '#667eea',
+                              '&:hover': { borderColor: '#5568d3', background: 'rgba(102, 126, 234, 0.1)' }
+                            }}
+                          >
+                            Ver detalle
+                          </Button>
+                        ) : (
+                          <Button 
+                            variant="outlined" 
+                            fullWidth
+                            onClick={() => { if (window.history.length > 1) navigate(-1); else navigate('/'); }}
+                            sx={{
+                              borderColor: '#667eea',
+                              color: '#667eea',
+                              '&:hover': { borderColor: '#5568d3', background: 'rgba(102, 126, 234, 0.1)' }
+                            }}
+                          >
+                            Volver
+                          </Button>
+                        )}
+                      </Stack>
                     </Stack>
-                  </Stack>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      )}
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        )}
 
-      <Snackbar open={!!message} autoHideDuration={4000} onClose={() => setMessage(null)}>
-        {message && <Alert severity={message.type} onClose={() => setMessage(null)}>{message.text}</Alert>}
-      </Snackbar>
-    </Container>
+        <Snackbar open={!!message} autoHideDuration={4000} onClose={() => setMessage(null)}>
+          {message && <Alert severity={message.type} onClose={() => setMessage(null)}>{message.text}</Alert>}
+        </Snackbar>
+      </Container>
+    </Box>
   );
 };
 
