@@ -105,13 +105,13 @@ const Notifications = () => {
       py: 4
     }}>
       <Container maxWidth="lg">
-        <Paper elevation={3} sx={{ p: 4, mb: 4, borderRadius: 3, background: 'rgba(255,255,255,0.95)' }}>
-          <Stack direction="row" justifyContent="space-between" alignItems="center">
+        <Paper elevation={3} sx={{ p: { xs: 2, md: 4 }, mb: 4, borderRadius: 3, background: 'rgba(255,255,255,0.95)' }}>
+          <Stack direction={{ xs: 'column', md: 'row' }} justifyContent="space-between" alignItems={{ xs: 'stretch', md: 'center' }} spacing={2}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <Badge badgeContent={unread} color="error">
-                <NotificationsActiveIcon sx={{ fontSize: 40, color: '#00f2fe' }} />
+                <NotificationsActiveIcon sx={{ fontSize: { xs: 32, md: 40 }, color: '#00f2fe' }} />
               </Badge>
-              <Typography variant="h3" sx={{ 
+              <Typography variant={{ xs: 'h4', md: 'h3' }} sx={{ 
                 fontWeight: 'bold',
                 background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
                 WebkitBackgroundClip: 'text',
@@ -120,34 +120,39 @@ const Notifications = () => {
                 Notificaciones
               </Typography>
             </Box>
-            <Stack direction="row" spacing={1}>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
               <Button 
                 variant="contained"
                 startIcon={<RefreshIcon />}
                 onClick={loadNotifications}
+                fullWidth={{ xs: true, sm: false }}
                 sx={{
                   background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                   '&:hover': { background: 'linear-gradient(135deg, #5568d3 0%, #6a4293 100%)' }
                 }}
               >
-                Actualizar
+                <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>Actualizar</Box>
+                <Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>Refrescar</Box>
               </Button>
               <Button 
                 variant="contained" 
                 onClick={handleMarkAllAsRead} 
                 disabled={notifications.length === 0 || unread === 0}
+                fullWidth={{ xs: true, sm: false }}
                 sx={{
                   background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
                   '&:hover': { background: 'linear-gradient(135deg, #3a8cce 0%, #00d4e6 100%)' }
                 }}
               >
-                Marcar todas leídas
+                <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>Marcar todas leídas</Box>
+                <Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>Todas leídas</Box>
               </Button>
               <Button 
                 variant="outlined" 
                 color="error" 
                 onClick={handleClearAll} 
                 disabled={notifications.length === 0}
+                fullWidth={{ xs: true, sm: false }}
               >
                 Limpiar
               </Button>
@@ -183,9 +188,9 @@ const Notifications = () => {
                 }}
               >
                 <CardContent>
-                  <Stack direction="row" justifyContent="space-between" alignItems="flex-start" spacing={2}>
+                  <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems={{ xs: 'stretch', sm: 'flex-start' }} spacing={2}>
                     <Box sx={{ flexGrow: 1 }}>
-                      <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
+                      <Stack direction={{ xs: 'column', sm: 'row' }} alignItems={{ xs: 'flex-start', sm: 'center' }} spacing={1} sx={{ mb: 1 }}>
                         <Typography variant="h6" sx={{ fontWeight: 'bold', color: n.leido ? '#666' : '#00f2fe' }}>
                           {n.mensaje}
                         </Typography>
@@ -194,7 +199,7 @@ const Notifications = () => {
                             label="Nueva" 
                             color="primary" 
                             size="small"
-                            sx={{ fontWeight: 'bold' }}
+                            sx={{ fontWeight: 'bold', alignSelf: 'flex-start' }}
                           />
                         )}
                       </Stack>
@@ -208,13 +213,16 @@ const Notifications = () => {
                         variant="outlined"
                         startIcon={<CheckCircleIcon />}
                         onClick={() => handleMarkAsRead(n.id)}
+                        fullWidth={{ xs: true, sm: false }}
                         sx={{
                           borderColor: '#4facfe',
                           color: '#4facfe',
-                          '&:hover': { borderColor: '#3a8cce', background: 'rgba(79, 172, 254, 0.1)' }
+                          '&:hover': { borderColor: '#3a8cce', background: 'rgba(79, 172, 254, 0.1)' },
+                          mt: { xs: 1, sm: 0 }
                         }}
                       >
-                        Marcar leída
+                        <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>Marcar leída</Box>
+                        <Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>Leída</Box>
                       </Button>
                     )}
                   </Stack>

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Container, Typography, Card, CardContent, Grid, Alert, Stack, Chip, Divider, Box, Button, Avatar, Paper, IconButton } from '@mui/material';
+import { Container, Typography, Card, CardContent, Grid, Alert, Stack, Chip, Divider, Box, Button, Avatar, Paper } from '@mui/material';
 import { LocalShipping, ReceiptLong, Replay, FilterList, FileDownload } from '@mui/icons-material';
 import dataService from '../services/dataService';
 
@@ -97,19 +97,44 @@ const MyOrders = () => {
   return (
     <Box sx={{ minHeight: '100vh', background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)' }}>
       <Container sx={{ py: 6 }}>
-        <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 3 }}>
-          <Avatar sx={{ bgcolor: 'rgba(255,255,255,0.25)', width: 56, height: 56 }}>
-            <LocalShipping />
-          </Avatar>
-          <Box>
-            <Typography variant="h4" fontWeight={700} color="common.white">Mis Pedidos</Typography>
-            <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.85)' }}>Revisa el estado de tus órdenes</Typography>
-          </Box>
-          <Box sx={{ flexGrow: 1 }} />
-          <IconButton onClick={load} sx={{ color: 'white' }} aria-label="Refrescar">
-            <Replay />
-          </IconButton>
-          <Button onClick={exportCsv} startIcon={<FileDownload />} sx={{ color: 'white' }}>Exportar CSV</Button>
+        <Stack spacing={2} sx={{ mb: 3 }}>
+          <Stack direction="row" alignItems="center" spacing={2}>
+            <Avatar sx={{ bgcolor: 'rgba(255,255,255,0.25)', width: 56, height: 56 }}>
+              <LocalShipping />
+            </Avatar>
+            <Box>
+              <Typography variant="h4" fontWeight={700} color="common.white">Mis Pedidos</Typography>
+              <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.85)' }}>Revisa el estado de tus órdenes</Typography>
+            </Box>
+          </Stack>
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
+            <Button 
+              onClick={load} 
+              startIcon={<Replay />} 
+              fullWidth={{ xs: true, sm: false }}
+              variant="contained"
+              sx={{ 
+                bgcolor: 'rgba(255,255,255,0.25)', 
+                color: 'white',
+                '&:hover': { bgcolor: 'rgba(255,255,255,0.35)' }
+              }}
+            >
+              Refrescar
+            </Button>
+            <Button 
+              onClick={exportCsv} 
+              startIcon={<FileDownload />} 
+              fullWidth={{ xs: true, sm: false }}
+              variant="contained"
+              sx={{ 
+                bgcolor: '#2c3e50',
+                color: 'white',
+                '&:hover': { bgcolor: '#1a252f' }
+              }}
+            >
+              Exportar CSV
+            </Button>
+          </Stack>
         </Stack>
 
         {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}

@@ -109,31 +109,131 @@ const MyPurchases = () => {
   return (
     <Box sx={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' }}>
       <Container sx={{ py: 6 }}>
-        <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 3 }}>
-          <Avatar sx={{ bgcolor: 'rgba(255,255,255,0.25)', width: 56, height: 56 }}>
-            <ShoppingBag />
-          </Avatar>
-          <Box>
-            <Typography variant="h4" fontWeight={700} color="common.white">Mis Compras</Typography>
-            <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.85)' }}>Historial y filtros de compras</Typography>
-          </Box>
-          <Box sx={{ flexGrow: 1 }} />
-          <Button onClick={() => load()} startIcon={<Replay />} sx={{ color: 'white' }}>Refrescar</Button>
-          <Button onClick={exportCsv} startIcon={<FileDownload />} sx={{ color: 'white' }}>Exportar CSV</Button>
+        <Stack spacing={2} sx={{ mb: 3 }}>
+          <Stack direction="row" alignItems="center" spacing={2}>
+            <Avatar sx={{ bgcolor: 'rgba(255,255,255,0.25)', width: 56, height: 56 }}>
+              <ShoppingBag />
+            </Avatar>
+            <Box>
+              <Typography variant="h4" fontWeight={700} color="common.white">Mis Compras</Typography>
+              <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.85)' }}>Historial y filtros de compras</Typography>
+            </Box>
+          </Stack>
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
+            <Button 
+              onClick={() => load()} 
+              startIcon={<Replay />} 
+              fullWidth={{ xs: true, sm: false }}
+              variant="contained"
+              sx={{ 
+                bgcolor: 'rgba(255,255,255,0.25)', 
+                color: 'white',
+                '&:hover': { bgcolor: 'rgba(255,255,255,0.35)' }
+              }}
+            >
+              Refrescar
+            </Button>
+            <Button 
+              onClick={exportCsv} 
+              startIcon={<FileDownload />} 
+              fullWidth={{ xs: true, sm: false }}
+              variant="contained"
+              sx={{ 
+                bgcolor: '#2c3e50',
+                color: 'white',
+                '&:hover': { bgcolor: '#1a252f' }
+              }}
+            >
+              Exportar CSV
+            </Button>
+          </Stack>
         </Stack>
 
         {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
         <Paper elevation={0} sx={{ p: 2, mb: 3, background: 'rgba(255,255,255,0.25)', borderRadius: 2 }}>
-          <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} alignItems={{ xs: 'stretch', md: 'center' }}>
-            <FilterList />
-            <TextField label="Desde" type="date" size="small" value={fromDate} onChange={(e) => setFromDate(e.target.value)} InputLabelProps={{ shrink: true }} />
-            <TextField label="Hasta" type="date" size="small" value={toDate} onChange={(e) => setToDate(e.target.value)} InputLabelProps={{ shrink: true }} />
-            <TextField label="Mín. monto" type="number" size="small" value={minAmount} onChange={(e) => setMinAmount(e.target.value)} inputProps={{ step: '0.01' }} />
-            <TextField label="Máx. monto" type="number" size="small" value={maxAmount} onChange={(e) => setMaxAmount(e.target.value)} inputProps={{ step: '0.01' }} />
-            <TextField label="Email vendedor" size="small" value={sellerEmail} onChange={(e) => setSellerEmail(e.target.value)} />
-            <Button variant="outlined" onClick={clearFilters}>Limpiar</Button>
-            <Chip icon={<AttachMoney />} color="success" label={`Mostrando ${filtered.length}`} />
+          <Stack spacing={2}>
+            <Stack direction="row" alignItems="center" spacing={1}>
+              <FilterList sx={{ color: 'white' }} />
+              <Typography variant="subtitle2" color="white" fontWeight={600}>Filtros</Typography>
+            </Stack>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+              <TextField 
+                label="Desde" 
+                type="date" 
+                size="small" 
+                value={fromDate} 
+                onChange={(e) => setFromDate(e.target.value)} 
+                InputLabelProps={{ shrink: true }} 
+                fullWidth
+                sx={{ bgcolor: 'white', borderRadius: 1 }}
+              />
+              <TextField 
+                label="Hasta" 
+                type="date" 
+                size="small" 
+                value={toDate} 
+                onChange={(e) => setToDate(e.target.value)} 
+                InputLabelProps={{ shrink: true }} 
+                fullWidth
+                sx={{ bgcolor: 'white', borderRadius: 1 }}
+              />
+            </Stack>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+              <TextField 
+                label="Mín. monto" 
+                type="number" 
+                size="small" 
+                value={minAmount} 
+                onChange={(e) => setMinAmount(e.target.value)} 
+                inputProps={{ step: '0.01' }} 
+                fullWidth
+                sx={{ bgcolor: 'white', borderRadius: 1 }}
+              />
+              <TextField 
+                label="Máx. monto" 
+                type="number" 
+                size="small" 
+                value={maxAmount} 
+                onChange={(e) => setMaxAmount(e.target.value)} 
+                inputProps={{ step: '0.01' }} 
+                fullWidth
+                sx={{ bgcolor: 'white', borderRadius: 1 }}
+              />
+            </Stack>
+            <TextField 
+              label="Email vendedor" 
+              size="small" 
+              value={sellerEmail} 
+              onChange={(e) => setSellerEmail(e.target.value)} 
+              fullWidth
+              sx={{ bgcolor: 'white', borderRadius: 1 }}
+            />
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} alignItems="center">
+              <Button 
+                variant="contained" 
+                onClick={clearFilters}
+                fullWidth={{ xs: true, sm: false }}
+                sx={{ 
+                  bgcolor: 'white', 
+                  color: '#f5576c',
+                  '&:hover': { bgcolor: 'rgba(255,255,255,0.9)' }
+                }}
+              >
+                Limpiar
+              </Button>
+              <Typography 
+                variant="body2" 
+                sx={{ 
+                  color: 'white',
+                  fontWeight: 600,
+                  alignSelf: { xs: 'flex-start', sm: 'center' },
+                  px: 2
+                }}
+              >
+                📊 Mostrando {filtered.length} transacciones
+              </Typography>
+            </Stack>
           </Stack>
         </Paper>
 

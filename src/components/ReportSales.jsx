@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Typography, Card, CardContent, Grid, Alert, Table, TableHead, TableRow, TableCell, TableBody, Button, Stack, Box, Paper } from '@mui/material';
+import { Container, Typography, Card, CardContent, Grid, Alert, Table, TableHead, TableRow, TableCell, TableBody, Button, Stack, Box, Paper, TableContainer } from '@mui/material';
 import dataService from '../services/dataService';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
@@ -47,9 +47,9 @@ const ReportSales = () => {
       py: 4
     }}>
       <Container maxWidth="lg">
-        <Paper elevation={3} sx={{ p: 4, mb: 4, borderRadius: 3, background: 'rgba(255,255,255,0.95)' }}>
-          <Stack direction="row" justifyContent="space-between" alignItems="center">
-            <Typography variant="h3" sx={{ 
+        <Paper elevation={3} sx={{ p: { xs: 2, md: 4 }, mb: 4, borderRadius: 3, background: 'rgba(255,255,255,0.95)' }}>
+          <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems={{ xs: 'stretch', sm: 'center' }} spacing={2}>
+            <Typography variant={{ xs: 'h4', md: 'h3' }} sx={{ 
               fontWeight: 'bold',
               background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
               WebkitBackgroundClip: 'text',
@@ -58,13 +58,14 @@ const ReportSales = () => {
               alignItems: 'center',
               gap: 2
             }}>
-              <AttachMoneyIcon sx={{ fontSize: 40, color: '#f5576c' }} />
+              <AttachMoneyIcon sx={{ fontSize: { xs: 32, md: 40 }, color: '#f5576c' }} />
               Reporte de Ventas
             </Typography>
             <Button 
               variant="contained" 
               onClick={load} 
               disabled={loading}
+              fullWidth={{ xs: true, sm: false }}
               sx={{
                 background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
                 '&:hover': { background: 'linear-gradient(135deg, #d97de6 0%, #d44357 100%)' }
@@ -114,44 +115,55 @@ const ReportSales = () => {
             </Grid>
             <Stack direction="row" justifyContent="flex-end" sx={{ mb: 2 }}>
               <Button 
-                size="small" 
-                variant="outlined"
+                variant="contained"
                 startIcon={<DownloadIcon />}
                 onClick={() => exportCsv(details)} 
                 disabled={details.length === 0}
+                fullWidth={{ xs: true, sm: false }}
                 sx={{
-                  borderColor: '#f5576c',
-                  color: '#f5576c',
-                  '&:hover': { borderColor: '#d44357', background: 'rgba(245, 87, 108, 0.1)' }
+                  background: '#2c3e50',
+                  color: 'white',
+                  '&:hover': { background: '#1a252f' },
+                  '&:disabled': { background: 'rgba(0,0,0,0.12)' }
                 }}
               >
                 Exportar CSV
               </Button>
             </Stack>
-            <Card sx={{ borderRadius: 3, background: 'rgba(255,255,255,0.95)' }}>
-              <CardContent>
-                <Table size="small">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Transacción</TableCell>
-                    <TableCell>Pedido</TableCell>
-                    <TableCell>Fecha</TableCell>
-                    <TableCell>Total</TableCell>
-                    <TableCell>Comprador</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {details.map((row) => (
-                    <TableRow key={row.transactionId}>
-                      <TableCell>{row.transactionId}</TableCell>
-                      <TableCell>{row.orderId}</TableCell>
-                      <TableCell>{row.transactionDate ? new Date(row.transactionDate).toLocaleString() : '-'}</TableCell>
-                      <TableCell>${row.totalAmount ?? 0}</TableCell>
-                      <TableCell>{row.buyerName || '-'}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-                </Table>
+            <Card sx={{ borderRadius: 3, background: 'rgba(255,255,255,0.95)', overflow: 'hidden' }}>
+              <CardContent sx={{ p: { xs: 1, md: 2 } }}>
+                <TableContainer sx={{ maxHeight: 440 }}>
+                  <Table size="small" stickyHeader>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5' }}>Transacción</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5' }}>Pedido</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5', minWidth: 150 }}>Fecha</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5' }}>Total</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5', minWidth: 120 }}>Comprador</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {details.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={5} align="center" sx={{ py: 3, color: 'text.secondary' }}>
+                            No hay ventas registradas
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        details.map((row) => (
+                          <TableRow key={row.transactionId} hover>
+                            <TableCell>{row.transactionId}</TableCell>
+                            <TableCell>{row.orderId}</TableCell>
+                            <TableCell>{row.transactionDate ? new Date(row.transactionDate).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' }) : '-'}</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold', color: '#38ef7d' }}>${row.totalAmount ?? 0}</TableCell>
+                            <TableCell>{row.buyerName || '-'}</TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
               </CardContent>
             </Card>
           </>
