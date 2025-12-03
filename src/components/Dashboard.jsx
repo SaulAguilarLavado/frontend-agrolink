@@ -119,7 +119,7 @@ const Dashboard = () => {
             })}
           </Stack>
 
-          <Grid container spacing={3}>
+          <Grid container spacing={{ xs: 2, sm: 3 }}>
             <Grid item xs={6} sm={4} md={3}>
               <Paper elevation={0} sx={{
                 textAlign: 'center',
@@ -204,10 +204,10 @@ const Dashboard = () => {
 
       {/* Contenido principal */}
       <Container maxWidth="lg" sx={{ py: 6 }}>
-        <Grid container spacing={4}>
+        <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
           {isAgricultor && (
             <>
-              <Grid item xs={12} md={6} lg={4}>
+              <Grid item xs={12} sm={6} md={6} lg={4}>
                 <Card sx={{
                   height: '100%',
                   background: 'linear-gradient(135deg, rgba(76, 175, 80, 0.9) 0%, rgba(129, 199, 132, 0.9) 100%)',
@@ -231,7 +231,7 @@ const Dashboard = () => {
                     borderRadius: '50%'
                   }
                 }}>
-                  <CardContent sx={{ p: 4, position: 'relative', zIndex: 1 }}>
+                  <CardContent sx={{ p: { xs: 2, sm: 3, md: 4 }, position: 'relative', zIndex: 1 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
                       <Avatar sx={{ bgcolor: 'rgba(255,255,255,0.2)', width: 56, height: 56, mr: 2 }}>
                         <Inventory2 sx={{ fontSize: 32 }} />
@@ -281,7 +281,7 @@ const Dashboard = () => {
                 </Card>
               </Grid>
                 
-              <Grid item xs={12} md={6} lg={4}>
+              <Grid item xs={12} sm={6} md={6} lg={4}>
                 <Card sx={{
                   height: '100%',
                   background: 'linear-gradient(135deg, rgba(255, 167, 38, 0.9) 0%, rgba(251, 192, 45, 0.9) 100%)',
@@ -305,7 +305,7 @@ const Dashboard = () => {
                     borderRadius: '50%'
                   }
                 }}>
-                  <CardContent sx={{ p: 4, position: 'relative', zIndex: 1 }}>
+                  <CardContent sx={{ p: { xs: 2, sm: 3, md: 4 }, position: 'relative', zIndex: 1 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
                       <Avatar sx={{ bgcolor: 'rgba(255,255,255,0.2)', width: 56, height: 56, mr: 2 }}>
                         <LocalShipping sx={{ fontSize: 32 }} />
@@ -347,7 +347,7 @@ const Dashboard = () => {
                   </CardContent>
                 </Card>
               </Grid>
-              <Grid item xs={12} md={6} lg={4}>
+              <Grid item xs={12} sm={6} md={6} lg={4}>
                 <Card sx={{
                   height: '100%',
                   background: 'linear-gradient(135deg, rgba(103, 58, 183, 0.9) 0%, rgba(156, 39, 176, 0.9) 100%)',
@@ -371,7 +371,7 @@ const Dashboard = () => {
                     borderRadius: '50%'
                   }
                 }}>
-                  <CardContent sx={{ p: 4, position: 'relative', zIndex: 1 }}>
+                  <CardContent sx={{ p: { xs: 2, sm: 3, md: 4 }, position: 'relative', zIndex: 1 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
                       <Avatar sx={{ bgcolor: 'rgba(255,255,255,0.2)', width: 56, height: 56, mr: 2 }}>
                         <Agriculture sx={{ fontSize: 32 }} />
@@ -437,7 +437,7 @@ const Dashboard = () => {
                     borderRadius: '50%'
                   }
                 }}>
-                  <CardContent sx={{ p: 4, position: 'relative', zIndex: 1 }}>
+                  <CardContent sx={{ p: { xs: 2, sm: 3, md: 4 }, position: 'relative', zIndex: 1 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
                       <Avatar sx={{ bgcolor: 'rgba(255,255,255,0.2)', width: 56, height: 56, mr: 2 }}>
                         <AttachMoney sx={{ fontSize: 32 }} />
@@ -506,7 +506,7 @@ const Dashboard = () => {
                   borderRadius: '50%'
                 }
               }}>
-                <CardContent sx={{ p: 4, position: 'relative', zIndex: 1 }}>
+                <CardContent sx={{ p: { xs: 2, sm: 3, md: 4 }, position: 'relative', zIndex: 1 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
                     <Avatar sx={{ bgcolor: 'rgba(255,255,255,0.2)', width: 56, height: 56, mr: 2 }}>
                       <Assessment sx={{ fontSize: 32 }} />
@@ -516,7 +516,7 @@ const Dashboard = () => {
                   <Typography variant="body2" sx={{ mb: 3, opacity: 0.95 }}>
                     Accede a informes detallados de tu actividad
                   </Typography>
-                  <Grid container spacing={2}>
+                  <Grid container spacing={{ xs: 1, sm: 2 }}>
                     {isAgricultor && (
                       <>
                         <Grid item xs={12} sm={4}>
@@ -607,7 +607,7 @@ const Dashboard = () => {
 
           {isComprador && (
             <>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} sm={6} md={6}>
                 <Card sx={{
                   height: '100%',
                   background: 'linear-gradient(135deg, rgba(33, 150, 243, 0.9) 0%, rgba(3, 169, 244, 0.9) 100%)',
@@ -631,7 +631,7 @@ const Dashboard = () => {
                     borderRadius: '50%'
                   }
                 }}>
-                  <CardContent sx={{ p: 4, position: 'relative', zIndex: 1 }}>
+                  <CardContent sx={{ p: { xs: 2, sm: 3, md: 4 }, position: 'relative', zIndex: 1 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
                       <Avatar sx={{ bgcolor: 'rgba(255,255,255,0.2)', width: 56, height: 56, mr: 2 }}>
                         <ShoppingCart sx={{ fontSize: 32 }} />
@@ -662,7 +662,7 @@ const Dashboard = () => {
                 </Card>
               </Grid>
 
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} sm={6} md={6}>
                 <Card sx={{
                   height: '100%',
                   background: 'linear-gradient(135deg, rgba(156, 39, 176, 0.9) 0%, rgba(233, 30, 99, 0.9) 100%)',
@@ -686,7 +686,7 @@ const Dashboard = () => {
                     borderRadius: '50%'
                   }
                 }}>
-                  <CardContent sx={{ p: 4, position: 'relative', zIndex: 1 }}>
+                  <CardContent sx={{ p: { xs: 2, sm: 3, md: 4 }, position: 'relative', zIndex: 1 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
                       <Avatar sx={{ bgcolor: 'rgba(255,255,255,0.2)', width: 56, height: 56, mr: 2 }}>
                         <LocalShipping sx={{ fontSize: 32 }} />

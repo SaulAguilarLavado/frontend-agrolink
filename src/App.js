@@ -31,8 +31,8 @@ import { CartProvider, useCart } from './context/CartContext';
 import { NotificationsProvider } from './context/NotificationsContext';
 
 // Componentes de Material UI e Iconos
-import { AppBar, Toolbar, Typography, Button, Container, Grid, Card, CardContent, Box, Stack, Divider, Badge, IconButton } from '@mui/material';
-import { TrendingUp, PeopleAlt, ReceiptLong, Logout, ShoppingCart, Notifications as NotificationsIcon } from '@mui/icons-material';
+import { AppBar, Toolbar, Typography, Button, Container, Grid, Card, CardContent, Box, Stack, Divider, Badge, IconButton, Drawer, List, ListItem, ListItemButton, ListItemText, useMediaQuery, useTheme } from '@mui/material';
+import { TrendingUp, PeopleAlt, ReceiptLong, Logout, ShoppingCart, Notifications as NotificationsIcon, Menu as MenuIcon } from '@mui/icons-material';
 
 import './App.css';
 
@@ -112,10 +112,14 @@ const NotificationsNav = React.memo(({ currentUser }) => {
 // ========================
 const AppLayout = () => {
   const [currentUser, setCurrentUser] = React.useState(authService.getCurrentUser());
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const handleLogout = () => {
     authService.logout();
     setCurrentUser(null);
+    setMobileMenuOpen(false);
     // Navegar al home después de logout
     return <Navigate to="/" />;
   };
@@ -124,45 +128,144 @@ const AppLayout = () => {
   const isComprador = currentUser?.roles?.includes('ROLE_COMPRADOR');
   const isAdmin = currentUser?.roles?.includes('ROLE_ADMINISTRADOR');
 
+  const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
+
+  const menuItems = React.useMemo(() => {
+    if (!currentUser) {
+      return [
+        { label: 'Login', path: '/login' },
+        { label: 'Registro', path: '/register' }
+      ];
+    }
+
+    const items = [{ label: 'Dashboard', path: '/dashboard' }];
+
+    if (isAgricultor) {
+      items.push(
+        { label: 'Inventario', path: '/inventory' },
+        { label: 'Mis Cultivos', path: '/my-crops' }
+      );
+    }
+
+    if (isComprador) {
+      items.push(
+        { label: 'Mercado', path: '/marketplace' },
+        { label: 'Mis Pedidos', path: '/mis-pedidos' }
+      );
+    }
+
+    if (isAdmin) {
+      items.push({ label: 'Admin Pedidos', path: '/admin/pedidos' });
+    }
+
+    return items;
+  }, [currentUser, isAgricultor, isComprador, isAdmin]);
+
   return (
     <>
       <AppBar position="static" color="default" elevation={1}>
-        <Toolbar>
-          <Container sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Typography component={RouterLink} to={currentUser ? "/dashboard" : "/"} variant="h6" sx={{ textDecoration: "none", color: "inherit" }}>AgroLink</Typography>
-            <Stack direction="row" spacing={1} alignItems="center">
-              {currentUser ? (
-                <>
-                  <Button component={RouterLink} to="/dashboard" color="inherit">Dashboard</Button>
-                  {isAgricultor && (
-                    <>
-                      <Button component={RouterLink} to="/inventory" color="inherit">Inventario</Button>
-                      <Button component={RouterLink} to="/my-crops" color="inherit">Mis Cultivos</Button>
-                    </>
-                  )}
-                  {isComprador && (
-                    <>
-                      <Button component={RouterLink} to="/marketplace" color="inherit">Mercado</Button>
-                      <Button component={RouterLink} to="/mis-pedidos" color="inherit">Mis Pedidos</Button>
-                      <CartNav />
-                    </>
-                  )}
-                  {isAdmin && <Button component={RouterLink} to="/admin/pedidos" color="inherit">Admin Pedidos</Button>}
-                  <NotificationsNav currentUser={currentUser} />
-                  <IconButton onClick={handleLogout} color="inherit"><Logout /></IconButton>
-                </>
-              ) : (
-                <>
-                  <Button component={RouterLink} to="/login" color="inherit">Login</Button>
-                  <Button component={RouterLink} to="/register" color="inherit">Registro</Button>
-                </>
-              )}
-            </Stack>
+        <Toolbar sx={{ minHeight: { xs: 56, sm: 64 } }}>
+          <Container sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: { xs: 1, sm: 2 } }}>
+            <Typography 
+              component={RouterLink} 
+              to={currentUser ? "/dashboard" : "/"} 
+              variant="h6" 
+              sx={{ 
+                textDecoration: "none", 
+                color: "inherit",
+                fontSize: { xs: '1.1rem', sm: '1.25rem' }
+              }}
+            >
+              AgroLink
+            </Typography>
+
+            {isMobile ? (
+              // MOBILE: Hamburger Menu
+              <Stack direction="row" spacing={1} alignItems="center">
+                {currentUser && (
+                  <>
+                    {isComprador && <CartNav />}
+                    <NotificationsNav currentUser={currentUser} />
+                  </>
+                )}
+                <IconButton
+                  color="inherit"
+                  onClick={toggleMobileMenu}
+                  edge="end"
+                >
+                  <MenuIcon />
+                </IconButton>
+              </Stack>
+            ) : (
+              // DESKTOP: Full Menu
+              <Stack direction="row" spacing={1} alignItems="center">
+                {currentUser ? (
+                  <>
+                    <Button component={RouterLink} to="/dashboard" color="inherit">Dashboard</Button>
+                    {isAgricultor && (
+                      <>
+                        <Button component={RouterLink} to="/inventory" color="inherit">Inventario</Button>
+                        <Button component={RouterLink} to="/my-crops" color="inherit">Mis Cultivos</Button>
+                      </>
+                    )}
+                    {isComprador && (
+                      <>
+                        <Button component={RouterLink} to="/marketplace" color="inherit">Mercado</Button>
+                        <Button component={RouterLink} to="/mis-pedidos" color="inherit">Mis Pedidos</Button>
+                        <CartNav />
+                      </>
+                    )}
+                    {isAdmin && <Button component={RouterLink} to="/admin/pedidos" color="inherit">Admin Pedidos</Button>}
+                    <NotificationsNav currentUser={currentUser} />
+                    <IconButton onClick={handleLogout} color="inherit"><Logout /></IconButton>
+                  </>
+                ) : (
+                  <>
+                    <Button component={RouterLink} to="/login" color="inherit">Login</Button>
+                    <Button component={RouterLink} to="/register" color="inherit">Registro</Button>
+                  </>
+                )}
+              </Stack>
+            )}
           </Container>
         </Toolbar>
       </AppBar>
 
-      <Box sx={{ flexGrow: 1, py: 2 }}>
+      {/* Mobile Drawer Menu */}
+      <Drawer
+        anchor="right"
+        open={mobileMenuOpen}
+        onClose={() => setMobileMenuOpen(false)}
+        sx={{
+          '& .MuiDrawer-paper': {
+            width: 250,
+            pt: 2
+          }
+        }}
+      >
+        <List>
+          {menuItems.map((item) => (
+            <ListItem key={item.path} disablePadding>
+              <ListItemButton
+                component={RouterLink}
+                to={item.path}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <ListItemText primary={item.label} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+          {currentUser && (
+            <ListItem disablePadding>
+              <ListItemButton onClick={handleLogout}>
+                <ListItemText primary="Cerrar Sesión" />
+              </ListItemButton>
+            </ListItem>
+          )}
+        </List>
+      </Drawer>
+
+      <Box sx={{ flexGrow: 1, py: { xs: 1, sm: 2 }, minHeight: 'calc(100vh - 200px)' }}>
         <ErrorBoundary>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -191,8 +294,19 @@ const AppLayout = () => {
         </ErrorBoundary>
       </Box>
 
-      <Box component="footer" sx={{ py: 4, mt: 'auto', textAlign: 'center' }}>
-        <Typography variant="body2" color="text.secondary">© {new Date().getFullYear()} AgroLink — Conectando el campo</Typography>
+      <Box 
+        component="footer" 
+        sx={{ 
+          py: { xs: 2, sm: 4 }, 
+          mt: 'auto', 
+          textAlign: 'center',
+          borderTop: '1px solid #e0e0e0',
+          bgcolor: '#f5f5f5'
+        }}
+      >
+        <Typography variant="body2" color="text.secondary">
+          © {new Date().getFullYear()} AgroLink — Conectando el campo
+        </Typography>
       </Box>
     </>
   );
